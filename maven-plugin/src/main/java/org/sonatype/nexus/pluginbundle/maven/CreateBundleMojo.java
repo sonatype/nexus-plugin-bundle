@@ -1,22 +1,16 @@
 /*
- * Sonatype Application Build Lifecycle
- * Copyright (C) 2009-2012 Sonatype, Inc.
+ * Copyright (c) 2007-2012 Sonatype, Inc. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is licensed to you under the Apache License Version 2.0,
+ * and you may not use this file except in compliance with the Apache License Version 2.0.
+ * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Apache License Version 2.0 is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-
-package org.sonatype.maven.plugin.app.bundle;
+package org.sonatype.nexus.pluginbundle.maven;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +20,7 @@ import java.util.Properties;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.AssemblyArchiver;
@@ -36,7 +31,6 @@ import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.sonatype.maven.plugin.app.ClasspathUtils;
 
 /**
  * Create a plugin bundle artifact attach it to the plugins project.
@@ -101,9 +95,7 @@ public class CreateBundleMojo
      */
     private MavenProjectHelper projectHelper;
 
-    public void execute()
-        throws MojoExecutionException
-    {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         if (bundle == null) {
             bundle = new BundleConfiguration(project, session);
         }

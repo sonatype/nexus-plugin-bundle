@@ -1,77 +1,61 @@
 <!--
 
-    Sonatype Application Build Lifecycle
-    Copyright (C) 2009-2012 Sonatype, Inc.
+    Copyright (c) 2007-2012 Sonatype, Inc. All rights reserved.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    This program is licensed to you under the Apache License Version 2.0,
+    and you may not use this file except in compliance with the Apache License Version 2.0.
+    You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see http://www.gnu.org/licenses/.
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the Apache License Version 2.0 is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
 
 -->
 <component-set>
   <components>
     <component>
-      <!-- Based on the 'jar' lifecycle mapping at:
-           http://svn.apache.org/repos/asf/maven/tags/maven-2.2.0/maven-core/src/main/resources/META-INF/plexus/components.xml
-      -->
       <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
-      <role-hint>abstract-plugin</role-hint>
+      <role-hint>nexus-plugin</role-hint>
       <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
-      <description>
-        Abstract lifecycle mapping for an application plugin build. These plugins all build in basically
-        the same way, are assembled the same way for installation in the applicatin, and share a
-        common plugin descriptor format. Therefore, the only thing we need to do for new applications
-        supporting this sort of plugin system is alias this abstract mapping using 
-        org.sonatype.maven.plugin.app.DelegatingLifecyleMapping.
-      </description>
       <configuration>
         <lifecycles>
           <lifecycle>
             <id>default</id>
             <phases>
-              <!-- Sonatype app-specific steps: 
-               |
-               |     1. verify that all app dependencies in this project have their scope set to 'provided'
-               -->
               <initialize>
-                org.sonatype.plugins:app-lifecycle-maven-plugin:${project.version}:check-dependencies
+                org.sonatype.nexus:nexus-plugin-bundle-maven-plugin:${project.version}:check-dependencies
               </initialize>
-              
-              <process-resources>org.apache.maven.plugins:maven-resources-plugin:2.4:resources</process-resources>
-              <compile>org.apache.maven.plugins:maven-compiler-plugin:2.0.2:compile</compile>
-              
-              <!-- Sonatype app-specific step: generate the plugin descriptor. -->
-              <process-classes>org.sonatype.plugins:app-lifecycle-maven-plugin:${project.version}:generate-metadata</process-classes>
-              
-              <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:2.4:testResources</process-test-resources>
-              <test-compile>org.apache.maven.plugins:maven-compiler-plugin:2.0.2:testCompile</test-compile>
-              <test>org.apache.maven.plugins:maven-surefire-plugin:2.5:test</test>
-
-              <package>org.apache.maven.plugins:maven-jar-plugin:2.2:jar</package>
-              
-              <!-- Sonatype app-specific step inside: create a bundle for dropping into an existing application instance -->
-              <!-- NEXUS-4254: due to Maven core incapabilities to interfere with pre-defined packaging lifecycle,
-              we moved the bundle creation to "pre-integration-test" phase to make this plugin play nice with nexus-test-environment-maven-plugin.
-              Since Maven guarantees that lifecycle defined plugins will execute before POM defined ones, we are guaranteed that bundle
-              will be created before the nexus-test-environment-maven-plugin plugin checks for deps and the bundle of currently built plugin.
-              
-              Note: we moved this step out of "package" phase, since donation of Nexus Indexer to ASF, as it was moved out of Nexus codebase
-              and shading become a necessity for nexus-indexer-lucene-plugin. The guarantee mentioned above also _prevented_ us to modify
-              the JAR (with shading for example) that got into the bundle, and this was the initial reason why we moved bundle create to a latter
-              phase. -->
-              <pre-integration-test>org.sonatype.plugins:app-lifecycle-maven-plugin:${project.version}:create-bundle</pre-integration-test>
-              
-              <install>org.apache.maven.plugins:maven-install-plugin:2.2:install</install>
-              <deploy>org.apache.maven.plugins:maven-deploy-plugin:2.4:deploy</deploy>
+              <process-resources>
+                org.apache.maven.plugins:maven-resources-plugin:2.6:resources
+              </process-resources>
+              <compile>
+                org.apache.maven.plugins:maven-compiler-plugin:2.5.1:compile
+              </compile>
+              <process-classes>
+                org.sonatype.nexus:nexus-plugin-bundle-maven-plugin:${project.version}:generate-metadata
+              </process-classes>
+              <process-test-resources>
+                org.apache.maven.plugins:maven-resources-plugin:2.6:testResources
+              </process-test-resources>
+              <test-compile>
+                org.apache.maven.plugins:maven-compiler-plugin:2.5.1:testCompile
+              </test-compile>
+              <test>
+                org.apache.maven.plugins:maven-surefire-plugin:2.12.4:test
+              </test>
+              <package>
+                org.apache.maven.plugins:maven-jar-plugin:2.4:jar
+              </package>
+              <pre-integration-test>
+                org.sonatype.nexus:nexus-plugin-bundle-maven-plugin:${project.version}:create-bundle
+              </pre-integration-test>
+              <install>
+                org.apache.maven.plugins:maven-install-plugin:2.4:install
+              </install>
+              <deploy>
+                org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy
+              </deploy>
             </phases>
           </lifecycle>
         </lifecycles>

@@ -1,21 +1,17 @@
 /*
- * Sonatype Application Build Lifecycle
- * Copyright (C) 2009-2012 Sonatype, Inc.
+ * Copyright (c) 2007-2012 Sonatype, Inc. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is licensed to you under the Apache License Version 2.0,
+ * and you may not use this file except in compliance with the Apache License Version 2.0.
+ * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see http://www.gnu.org/licenses/.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Apache License Version 2.0 is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.maven.plugin.app;
+
+package org.sonatype.nexus.pluginbundle.maven;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.interpolation.InterpolationException;
@@ -33,26 +29,21 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Provides application-specific paths and other information for use in the app-lifecycle mojos. This allows the mojos
- * to remain application agnostic, with the user adding in the build extension necessary for the specific application.
- * This build extension supplies a specific configuration or implementation of ApplicationInformation to supply
- * app-specific configuration defaults.
- * 
- * @author jdcasey
+ * ???
+ *
+ * @since 1.0
  */
-public class ApplicationInformation
+public abstract class ApplicationInformation
 {
-
     private static final List<String> PROJECT_PREFIXES;
 
-    static
-    {
+    static {
         List<String> prefixes = new ArrayList<String>();
 
-        prefixes.add( "project." );
-        prefixes.add( "pom." );
+        prefixes.add("project.");
+        prefixes.add("pom.");
 
-        PROJECT_PREFIXES = Collections.unmodifiableList( prefixes );
+        PROJECT_PREFIXES = Collections.unmodifiableList(prefixes);
     }
 
     private Set<String> coreGroupIdPatterns;
@@ -72,13 +63,13 @@ public class ApplicationInformation
     /**
      * Interpolate any project references in the plugin metadata output path, returning a {@link File} reference to the
      * interpolated path.
-     * 
+     *
      * @see ApplicationInformation#setPluginMetadataPath(String)
      */
-    public File getPluginMetadataFile( final MavenProject project )
+    public File getPluginMetadataFile(final MavenProject project)
         throws InterpolationException
     {
-        return interpolateToFile( getPluginMetadataPath(), project );
+        return interpolateToFile(getPluginMetadataPath(), project);
     }
 
     /**
@@ -86,15 +77,11 @@ public class ApplicationInformation
      * there are no application core groupIds, return false. If the groupId matches one of the core groupIds using
      * {@link Object#equals(Object)}, or using {@link String#matches(String)}, then return true.
      */
-    public boolean matchesCoreGroupIds( final String groupId )
-    {
+    public boolean matchesCoreGroupIds(final String groupId) {
         boolean matchedCoreGroupId = false;
-        if ( getCoreGroupIdPatterns() != null )
-        {
-            for ( String pattern : getCoreGroupIdPatterns() )
-            {
-                if ( groupId.equals( pattern ) || groupId.matches( pattern ) )
-                {
+        if (getCoreGroupIdPatterns() != null) {
+            for (String pattern : getCoreGroupIdPatterns()) {
+                if (groupId.equals(pattern) || groupId.matches(pattern)) {
                     matchedCoreGroupId = true;
                     break;
                 }
@@ -107,21 +94,18 @@ public class ApplicationInformation
     /**
      * @see ApplicationInformation#setCoreGroupIdPatterns(Set)
      */
-    public void addCoreGroupIdPattern( final String coreGroupIdPattern )
-    {
-        if ( coreGroupIdPatterns == null )
-        {
+    public void addCoreGroupIdPattern(final String coreGroupIdPattern) {
+        if (coreGroupIdPatterns == null) {
             coreGroupIdPatterns = new HashSet<String>();
         }
 
-        coreGroupIdPatterns.add( coreGroupIdPattern );
+        coreGroupIdPatterns.add(coreGroupIdPattern);
     }
 
     /**
      * @see ApplicationInformation#setCoreGroupIdPatterns(Set)
      */
-    public Set<String> getCoreGroupIdPatterns()
-    {
+    public Set<String> getCoreGroupIdPatterns() {
         return coreGroupIdPatterns;
     }
 
@@ -132,16 +116,14 @@ public class ApplicationInformation
      * declared with the 'provided' scope. These dependencies will be excluded from the plugin descriptor, and the
      * plugin bundle itself.
      */
-    public void setCoreGroupIdPatterns( final Set<String> coreGroupIdPatterns )
-    {
+    public void setCoreGroupIdPatterns(final Set<String> coreGroupIdPatterns) {
         this.coreGroupIdPatterns = coreGroupIdPatterns;
     }
 
     /**
      * @see ApplicationInformation#setPluginPackaging(String)
      */
-    public String getPluginPackaging()
-    {
+    public String getPluginPackaging() {
         return pluginPackaging;
     }
 
@@ -151,16 +133,14 @@ public class ApplicationInformation
      * of the plugin descriptor from its external dependencies. Inter-plugin dependencies will later be resolved using
      * the application's plugin manager.
      */
-    public void setPluginPackaging( final String pluginPackaging )
-    {
+    public void setPluginPackaging(final String pluginPackaging) {
         this.pluginPackaging = pluginPackaging;
     }
 
     /**
      * @see ApplicationInformation#setPluginMetadataPath(String)
      */
-    public String getPluginMetadataPath()
-    {
+    public String getPluginMetadataPath() {
         return pluginMetadataPath;
     }
 
@@ -169,89 +149,78 @@ public class ApplicationInformation
      * project expressions just like any plugin or POM would. <br/>
      * Normally, this path will start with ${project.build.outputDirectory/META-INF/.
      */
-    public void setPluginMetadataPath( final String pluginMetadataFile )
-    {
+    public void setPluginMetadataPath(final String pluginMetadataFile) {
         this.pluginMetadataPath = pluginMetadataFile;
     }
 
     /**
      * Default application ID.
      */
-    public String getApplicationId()
-    {
+    public String getApplicationId() {
         return applicationId;
     }
 
     /**
      * Default application ID.
      */
-    public void setApplicationId( final String applicationId )
-    {
+    public void setApplicationId(final String applicationId) {
         this.applicationId = applicationId;
     }
 
     /**
      * @see ApplicationInformation#setApplicationMinVersion(String)
      */
-    public String getApplicationMinVersion()
-    {
+    public String getApplicationMinVersion() {
         return applicationMinVersion;
     }
 
     /**
      * The default minimum application version with which this plugin being built is compatible.
      */
-    public void setApplicationMinVersion( final String applicationMinVersion )
-    {
+    public void setApplicationMinVersion(final String applicationMinVersion) {
         this.applicationMinVersion = applicationMinVersion;
     }
 
     /**
      * @see ApplicationInformation#setApplicationMaxVersion(String)
      */
-    public String getApplicationMaxVersion()
-    {
+    public String getApplicationMaxVersion() {
         return applicationMaxVersion;
     }
 
     /**
      * The default maximum application version with which this plugin being built is compatible.
      */
-    public void setApplicationMaxVersion( final String applicationMaxVersion )
-    {
+    public void setApplicationMaxVersion(final String applicationMaxVersion) {
         this.applicationMaxVersion = applicationMaxVersion;
     }
 
     /**
      * @see ApplicationInformation#setApplicationEdition(String)
      */
-    public String getApplicationEdition()
-    {
+    public String getApplicationEdition() {
         return applicationEdition;
     }
 
     /**
      * The default edition of this application (OSS, Pro, etc.) with which this plugin is meant to work.
      */
-    public void setApplicationEdition( final String applicationEdition )
-    {
+    public void setApplicationEdition(final String applicationEdition) {
         this.applicationEdition = applicationEdition;
     }
 
-    private File interpolateToFile( final String pattern, final MavenProject project )
+    private File interpolateToFile(final String pattern, final MavenProject project)
         throws InterpolationException
     {
-        if ( pattern == null )
-        {
+        if (pattern == null) {
             return null;
         }
 
         Interpolator interpolator = new StringSearchInterpolator();
-        interpolator.addValueSource( new PrefixedObjectValueSource( PROJECT_PREFIXES, project, false ) );
+        interpolator.addValueSource(new PrefixedObjectValueSource(PROJECT_PREFIXES, project, false));
 
-        RecursionInterceptor ri = new PrefixAwareRecursionInterceptor( PROJECT_PREFIXES );
+        RecursionInterceptor ri = new PrefixAwareRecursionInterceptor(PROJECT_PREFIXES);
 
-        return new File( interpolator.interpolate( pattern, ri ) );
+        return new File(interpolator.interpolate(pattern, ri));
     }
-
 }
