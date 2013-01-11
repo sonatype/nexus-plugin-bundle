@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
+
 package org.sonatype.maven.plugin.app.descriptor;
 
 import org.apache.maven.scm.CommandParameters;
@@ -39,67 +40,64 @@ public class HgDebugIdCommand
     extends AbstractCommand
 {
     @Override
-    protected HgDebugIdScmResult executeCommand( ScmProviderRepository repository, ScmFileSet fileSet,
-                                                 CommandParameters parameters )
+    protected HgDebugIdScmResult executeCommand(final ScmProviderRepository repository,
+                                                final ScmFileSet fileSet,
+                                                final CommandParameters parameters)
         throws ScmException
     {
         HgOutputConsumer consumer;
         ScmResult result;
 
-        consumer = new HgOutputConsumer( getLogger() );
-        result = HgUtils.execute( consumer, getLogger(), fileSet.getBasedir(), new String[] { "id", "-i", "--debug" } );
-        checkResult( result );
+        consumer = new HgOutputConsumer(getLogger());
+        result = HgUtils.execute(consumer, getLogger(), fileSet.getBasedir(), new String[]{"id", "-i", "--debug"});
+        checkResult(result);
 
         String changeSetHash = consumer.getOutput();
 
         // trim off the possible "+"
-        if ( changeSetHash.endsWith( "+" ) )
-        {
-            changeSetHash = changeSetHash.substring( 0, changeSetHash.length() - 1 );
+        if (changeSetHash.endsWith("+")) {
+            changeSetHash = changeSetHash.substring(0, changeSetHash.length() - 1);
         }
 
-        consumer = new HgOutputConsumer( getLogger() );
-        result =
-            HgUtils.execute( consumer, getLogger(), fileSet.getBasedir(),
-                new String[] { "log", "-r", String.valueOf( changeSetHash ), "--template", "\"{date|isodate}\"" } );
-        checkResult( result );
+        consumer = new HgOutputConsumer(getLogger());
+        result = HgUtils.execute(consumer, getLogger(), fileSet.getBasedir(), new String[]{
+            "log",
+            "-r",
+            String.valueOf(changeSetHash),
+            "--template",
+            "\"{date|isodate}\""
+        });
+        checkResult(result);
 
-        final String changeSetDate = consumer.getOutput();
-
-        return new HgDebugIdScmResult( null, null, null, true, changeSetHash, changeSetDate );
+        return new HgDebugIdScmResult(null, null, null, true, changeSetHash, consumer.getOutput());
     }
 
-    private void checkResult( ScmResult result )
+    private void checkResult(final ScmResult result)
         throws ScmException
     {
-        if ( !result.isSuccess() )
-        {
-            getLogger().debug( "Provider message:" );
-            getLogger().debug( result.getProviderMessage() == null ? "" : result.getProviderMessage() );
-            getLogger().debug( "Command output:" );
-            getLogger().debug( result.getCommandOutput() == null ? "" : result.getCommandOutput() );
-            throw new ScmException( "Command failed." + StringUtils.defaultString( result.getProviderMessage() ) );
+        if (!result.isSuccess()) {
+            getLogger().debug("Provider message:");
+            getLogger().debug(result.getProviderMessage() == null ? "" : result.getProviderMessage());
+            getLogger().debug("Command output:");
+            getLogger().debug(result.getCommandOutput() == null ? "" : result.getCommandOutput());
+            throw new ScmException("Command failed: " + StringUtils.defaultString(result.getProviderMessage()));
         }
     }
 
     private static class HgOutputConsumer
         extends HgConsumer
     {
-
         private String output;
 
-        private HgOutputConsumer( ScmLogger logger )
-        {
-            super( logger );
+        private HgOutputConsumer(final ScmLogger logger) {
+            super(logger);
         }
 
-        public void doConsume( ScmFileStatus status, String line )
-        {
+        public void doConsume(final ScmFileStatus status, final String line) {
             output = line;
         }
 
-        private String getOutput()
-        {
+        private String getOutput() {
             return output;
         }
     }

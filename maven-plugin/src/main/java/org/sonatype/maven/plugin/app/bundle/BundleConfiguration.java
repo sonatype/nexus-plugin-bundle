@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
+
 package org.sonatype.maven.plugin.app.bundle;
 
 import java.io.File;
@@ -33,14 +34,13 @@ import org.apache.maven.shared.filtering.MavenFileFilter;
 /**
  * Supplemental configuration for plugin bundle assemblies, to allow users to customize the finalName, archive
  * configuration (the {@link MavenArchiveConfiguration} instance), and tarLongFileMode. This class is similar to the
- * plugin parameters available in the Assembly plugin itself.
+ * plugin parameters available in the maven-assembly-plugin itself.
  *
  * @since 1.0
  */
 public class BundleConfiguration
     implements AssemblerConfigurationSource
 {
-
     private MavenProject project;
 
     private MavenSession session;
@@ -53,198 +53,160 @@ public class BundleConfiguration
 
     private String tarLongFileMode = "gnu";
 
-    public BundleConfiguration()
-    {
+    public BundleConfiguration() {
+        // empty
     }
 
-    public BundleConfiguration( final MavenProject project, final MavenSession session )
-    {
-        initDefaults( project, session );
+    public BundleConfiguration(final MavenProject project, final MavenSession session) {
+        initDefaults(project, session);
     }
 
-    public void initDefaults( final MavenProject project, final MavenSession session )
-    {
+    public void initDefaults(final MavenProject project, final MavenSession session) {
         this.project = project;
         this.session = session;
-        if ( finalName == null )
-        {
+        if (finalName == null) {
             finalName = project.getBuild().getFinalName();
         }
     }
 
-    public File getArchiveBaseDirectory()
-    {
+    public File getArchiveBaseDirectory() {
         return null;
     }
 
-    public String getArchiverConfig()
-    {
+    public String getArchiverConfig() {
         return null;
     }
 
-    public File getBasedir()
-    {
+    public File getBasedir() {
         return project.getBasedir();
     }
 
-    public String getClassifier()
-    {
+    public String getClassifier() {
         return null;
     }
 
-    public String getDescriptor()
-    {
+    public String getDescriptor() {
         return null;
     }
 
-    public String getDescriptorId()
-    {
+    public String getDescriptorId() {
         return null;
     }
 
-    public String[] getDescriptorReferences()
-    {
+    public String[] getDescriptorReferences() {
         return null;
     }
 
-    public File getDescriptorSourceDirectory()
-    {
+    public File getDescriptorSourceDirectory() {
         return null;
     }
 
-    public String[] getDescriptors()
-    {
+    public String[] getDescriptors() {
         return null;
     }
 
-    public List getFilters()
-    {
+    public List getFilters() {
         return filters;
     }
 
-    public void addFilter( final String filter )
-    {
-        if ( filters == null )
-        {
+    public void addFilter(final String filter) {
+        if (filters == null) {
             filters = new ArrayList<String>();
         }
 
-        filters.add( filter );
+        filters.add(filter);
     }
 
-    public void setFilters( final List<String> filters )
-    {
+    public void setFilters(final List<String> filters) {
         this.filters = filters;
     }
 
-    public String getFinalName()
-    {
+    public String getFinalName() {
         return finalName;
     }
 
-    public void setFinalName( final String finalName )
-    {
+    public void setFinalName(final String finalName) {
         this.finalName = finalName;
     }
 
-    public MavenArchiveConfiguration getJarArchiveConfiguration()
-    {
+    public MavenArchiveConfiguration getJarArchiveConfiguration() {
         return archiveConfiguration;
     }
 
-    public void setArchive( final MavenArchiveConfiguration archiveConfiguration )
-    {
+    public void setArchive(final MavenArchiveConfiguration archiveConfiguration) {
         this.archiveConfiguration = archiveConfiguration;
     }
 
-    public ArtifactRepository getLocalRepository()
-    {
+    public ArtifactRepository getLocalRepository() {
         return session.getLocalRepository();
     }
 
-    public MavenSession getMavenSession()
-    {
+    public MavenSession getMavenSession() {
         return session;
     }
 
-    public File getOutputDirectory()
-    {
-        return new File( project.getBuild().getDirectory() );
+    public File getOutputDirectory() {
+        return new File(project.getBuild().getDirectory());
     }
 
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return project;
     }
 
-    public List getReactorProjects()
-    {
+    public List getReactorProjects() {
         return session.getProjects();
     }
 
-    @SuppressWarnings( "unchecked" )
-    public List getRemoteRepositories()
-    {
+    @SuppressWarnings("unchecked")
+    public List getRemoteRepositories() {
         return project.getRemoteArtifactRepositories();
     }
 
-    public File getSiteDirectory()
-    {
-        return new File( project.getReporting().getOutputDirectory() );
+    public File getSiteDirectory() {
+        return new File(project.getReporting().getOutputDirectory());
     }
 
-    public String getTarLongFileMode()
-    {
+    public String getTarLongFileMode() {
         return tarLongFileMode;
     }
 
-    public void setTarLongFileMode( final String mode )
-    {
+    public void setTarLongFileMode(final String mode) {
         tarLongFileMode = mode;
     }
 
-    public File getTemporaryRootDirectory()
-    {
-        return new File( project.getBuild().getDirectory(), "nexus-bundle-tmp" );
+    public File getTemporaryRootDirectory() {
+        return new File(project.getBuild().getDirectory(), "nexus-bundle-tmp");
     }
 
-    public File getWorkingDirectory()
-    {
-        return new File( project.getBuild().getDirectory(), "nexus-bundle/work" );
+    public File getWorkingDirectory() {
+        return new File(project.getBuild().getDirectory(), "nexus-bundle/work");
     }
 
-    public boolean isAssemblyIdAppended()
-    {
+    public boolean isAssemblyIdAppended() {
         return true;
     }
 
-    public boolean isDryRun()
-    {
+    public boolean isDryRun() {
         return false;
     }
 
-    public boolean isIgnoreDirFormatExtensions()
-    {
+    public boolean isIgnoreDirFormatExtensions() {
         return true;
     }
 
-    public boolean isIgnoreMissingDescriptor()
-    {
+    public boolean isIgnoreMissingDescriptor() {
         return false;
     }
 
-    public boolean isSiteIncluded()
-    {
+    public boolean isSiteIncluded() {
         return false;
     }
 
-    public String getAssemblyFileName( final Assembly assembly )
-    {
-        return AssemblyFormatUtils.getDistributionName( assembly, this );
+    public String getAssemblyFileName(final Assembly assembly) {
+        return AssemblyFormatUtils.getDistributionName(assembly, this);
     }
 
-    public MavenFileFilter getMavenFileFilter()
-    {
+    public MavenFileFilter getMavenFileFilter() {
         return null;
     }
 

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
+
 package org.sonatype.maven.plugin.app.descriptor;
 
 import org.apache.maven.scm.ScmResult;
@@ -31,22 +32,24 @@ public class HgDebugIdScmResult
 
     private final String changeSetDate;
 
-    public HgDebugIdScmResult( String commandLine, String providerMessage, String commandOutput, boolean success,
-                               final String changeSetHash, final String changeSetDate )
+    public HgDebugIdScmResult(final String commandLine,
+                              final String providerMessage,
+                              final String commandOutput,
+                              final boolean success,
+                              final String changeSetHash,
+                              final String changeSetDate)
     {
-        super( commandLine, providerMessage, commandOutput, success );
-        
+        super(commandLine, providerMessage, commandOutput, success);
+
         this.changeSetHash = changeSetHash;
         this.changeSetDate = changeSetDate;
     }
 
-    public String getChangeSetHash()
-    {
+    public String getChangeSetHash() {
         return changeSetHash;
     }
 
-    public String getChangeSetDate()
-    {
+    public String getChangeSetDate() {
         return changeSetDate;
     }
 }

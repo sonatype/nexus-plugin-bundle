@@ -118,10 +118,10 @@ public class CreateBundleMojo
                 assembly = assemblyReader.getAssemblyFromDescriptorFile(assemblyDescriptor, bundle);
             }
             catch (AssemblyReadException e) {
-                throw new MojoExecutionException("Could not read assembly descriptor " + assemblyDescriptor.getAbsolutePath(), e);
+                throw new MojoExecutionException("Could not read assembly descriptor: " + assemblyDescriptor.getAbsolutePath(), e);
             }
             catch (InvalidAssemblerConfigurationException e) {
-                throw new MojoExecutionException("Invalid assembly descriptor " + assemblyDescriptor.getAbsolutePath(), e);
+                throw new MojoExecutionException("Invalid assembly descriptor: " + assemblyDescriptor.getAbsolutePath(), e);
             }
         }
         else {
@@ -150,11 +150,10 @@ public class CreateBundleMojo
             throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
         }
 
-        FileItem fi = new FileItem();
-        fi.setSource(project.getArtifact().getFile().getPath());
-        fi.setOutputDirectory(project.getArtifactId() + "-" + project.getVersion());
-
-        assembly.addFile(fi);
+        FileItem fileItem = new FileItem();
+        fileItem.setSource(project.getArtifact().getFile().getPath());
+        fileItem.setOutputDirectory(project.getArtifactId() + "-" + project.getVersion());
+        assembly.addFile(fileItem);
 
         try {
             File assemblyFile = archiver.createArchive(assembly, bundle.getAssemblyFileName(assembly), "zip", bundle);
