@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-package org.sonatype.maven.plugin.app;
 
+package org.sonatype.maven.plugin.app;
 
 import org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping;
 import org.apache.maven.lifecycle.mapping.LifecycleMapping;
@@ -28,9 +28,8 @@ import java.util.Map;
  * Maven {@link LifecycleMapping} implementation which delegates to another {@link LifecycleMapping} instance. This
  * allows the aliasing of one mapping by another. In our case, it allows us to specify an abstract lifecycle mapping for
  * application plugin builds, then reference the abstract case with an application-specific packaging name.
- * 
- * @author jdcasey
- * 
+ *
+ * @since 1.0
  */
 public class DelegatingLifecyleMapping
     extends DefaultLifecycleMapping
@@ -38,18 +37,16 @@ public class DelegatingLifecyleMapping
 
     private LifecycleMapping delegate;
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     @Override
-    public List getOptionalMojos( final String lifecycle )
-    {
-        return delegate.getOptionalMojos( lifecycle );
+    public List getOptionalMojos(final String lifecycle) {
+        return delegate.getOptionalMojos(lifecycle);
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     @Override
-    public Map getPhases( final String lifecycle )
-    {
-        return delegate.getPhases( lifecycle );
+    public Map getPhases(final String lifecycle) {
+        return delegate.getPhases(lifecycle);
     }
 
 }

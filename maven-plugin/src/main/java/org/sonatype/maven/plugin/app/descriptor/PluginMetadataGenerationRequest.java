@@ -27,8 +27,8 @@ import org.sonatype.plugins.model.PluginMetadata;
 
 /**
  * Request for generating plugin metadata.
- * 
- * @author toby
+ *
+ * @since 1.0
  */
 public class PluginMetadataGenerationRequest
 {

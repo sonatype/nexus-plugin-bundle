@@ -32,8 +32,8 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * This is Hg "id" command but with "--debug" switch, to force Hg show full checksum, not just the part of it as it
  * usually does.
- * 
- * @author cstamas
+ *
+ * @since 1.0
  */
 public class HgDebugIdCommand
     extends AbstractCommand

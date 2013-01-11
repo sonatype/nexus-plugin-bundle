@@ -34,11 +34,8 @@ import org.apache.maven.shared.filtering.MavenFileFilter;
  * Supplemental configuration for plugin bundle assemblies, to allow users to customize the finalName, archive
  * configuration (the {@link MavenArchiveConfiguration} instance), and tarLongFileMode. This class is similar to the
  * plugin parameters available in the Assembly plugin itself.
- * 
- * @see {@link http://maven.apache.org/plugins/maven-assembly-plugin/}
- * 
- * @author jdcasey
- * 
+ *
+ * @since 1.0
  */
 public class BundleConfiguration
     implements AssemblerConfigurationSource

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
+
 package org.sonatype.maven.plugin.app.nexus;
 
 import org.sonatype.maven.plugin.app.ApplicationInformation;
@@ -22,26 +23,23 @@ import org.sonatype.maven.plugin.app.ApplicationInformation;
 /**
  * Implementation of {@link ApplicationInformation}, which supplies Nexus-specific default configurations, plugin
  * packaging, and application-core groupIds. This is simpler to maintain for now than an XML configuration.
- * 
- * @author jdcasey
- * 
+ *
+ * @since 1.0
  */
 public class NexusApplicationInformation
     extends ApplicationInformation
 {
+    public NexusApplicationInformation() {
+        addCoreGroupIdPattern("org.sonatype.nexus");
+        addCoreGroupIdPattern("com.sonatype.nexus");
 
-    public NexusApplicationInformation()
-    {
-        addCoreGroupIdPattern( "org.sonatype.nexus" );
-        addCoreGroupIdPattern( "com.sonatype.nexus" );
+        setPluginPackaging("nexus-plugin");
 
-        setPluginPackaging( "nexus-plugin" );
+        setApplicationId("nexus");
+        setPluginMetadataPath("${project.build.outputDirectory}/META-INF/nexus/plugin.xml");
 
-        setApplicationId( "nexus" );
-        setPluginMetadataPath( "${project.build.outputDirectory}/META-INF/nexus/plugin.xml" );
+        setApplicationMinVersion("1.10.0");
 
-        setApplicationMinVersion( "1.10.0" );
-
-        setApplicationEdition( "OSS" );
+        setApplicationEdition("OSS");
     }
 }

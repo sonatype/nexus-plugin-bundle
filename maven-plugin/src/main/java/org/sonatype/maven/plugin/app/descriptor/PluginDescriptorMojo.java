@@ -50,6 +50,8 @@ import org.sonatype.maven.plugin.app.ClasspathUtils;
  * @goal generate-metadata
  * @phase process-classes
  * @requiresDependencyResolution test
+ *
+ * @since 1.0
  */
 public class PluginDescriptorMojo
     extends AbstractMojo

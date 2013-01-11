@@ -33,8 +33,8 @@ import org.codehaus.plexus.util.cli.Commandline;
 
 /**
  * A simple command to present checksum of current repo.
- * 
- * @author cstamas
+ *
+ * @since 1.0
  */
 public class GitRevParseCommand
     extends AbstractCommand

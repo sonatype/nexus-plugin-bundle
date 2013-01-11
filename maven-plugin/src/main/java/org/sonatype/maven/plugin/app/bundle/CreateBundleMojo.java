@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
+
 package org.sonatype.maven.plugin.app.bundle;
 
 import java.io.File;
@@ -38,17 +39,18 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.maven.plugin.app.ClasspathUtils;
 
 /**
- * Create a plugin bundle artifact attach it to the plugin's project.
- * 
+ * Create a plugin bundle artifact attach it to the plugins project.
+ *
  * @goal create-bundle
  * @phase package
+ * @since 1.0
  */
 public class CreateBundleMojo
     extends AbstractMojo
 {
     /**
      * The current plugin project being built.
-     * 
+     *
      * @parameter default-value="${project}"
      * @required
      * @readonly
@@ -57,7 +59,7 @@ public class CreateBundleMojo
 
     /**
      * The current build session, for reference from the Assembly API.
-     * 
+     *
      * @parameter default-value="${session}"
      * @required
      * @readonly
@@ -66,14 +68,14 @@ public class CreateBundleMojo
 
     /**
      * Supplemental plugin assembly configuration.
-     * 
+     *
      * @parameter
      */
     private BundleConfiguration bundle;
 
     /**
      * Alternative assembly descriptor. If not specified, default assembly descriptor will be used instead.
-     * 
+     *
      * @parameter
      * @readonly
      */
@@ -82,7 +84,7 @@ public class CreateBundleMojo
     /**
      * Assembly manager component that is responsible for creating the plugin bundle assembly and attaching it to the
      * current project.
-     * 
+     *
      * @component
      */
     private AssemblyArchiver archiver;
@@ -94,7 +96,7 @@ public class CreateBundleMojo
 
     /**
      * Component used by the {@link AssemblyArchiver} to attach the bundle artifact to the current project.
-     * 
+     *
      * @component
      */
     private MavenProjectHelper projectHelper;
@@ -102,88 +104,70 @@ public class CreateBundleMojo
     public void execute()
         throws MojoExecutionException
     {
-
-        if ( bundle == null )
-        {
-            bundle = new BundleConfiguration( project, session );
+        if (bundle == null) {
+            bundle = new BundleConfiguration(project, session);
         }
-        else
-        {
-            bundle.initDefaults( project, session );
+        else {
+            bundle.initDefaults(project, session);
         }
 
         Assembly assembly;
 
-        if ( assemblyDescriptor != null )
-        {
-            try
-            {
-                assembly = assemblyReader.getAssemblyFromDescriptorFile( assemblyDescriptor, bundle );
+        if (assemblyDescriptor != null) {
+            try {
+                assembly = assemblyReader.getAssemblyFromDescriptorFile(assemblyDescriptor, bundle);
             }
-            catch ( AssemblyReadException e )
-            {
-                throw new MojoExecutionException( "Could not read assembly descriptor "
-                    + assemblyDescriptor.getAbsolutePath(), e );
+            catch (AssemblyReadException e) {
+                throw new MojoExecutionException("Could not read assembly descriptor " + assemblyDescriptor.getAbsolutePath(), e);
             }
-            catch ( InvalidAssemblerConfigurationException e )
-            {
-                throw new MojoExecutionException(
-                    "Invalid assembly descriptor " + assemblyDescriptor.getAbsolutePath(), e );
+            catch (InvalidAssemblerConfigurationException e) {
+                throw new MojoExecutionException("Invalid assembly descriptor " + assemblyDescriptor.getAbsolutePath(), e);
             }
         }
-        else
-        {
+        else {
             assembly = new Assembly();
         }
 
-        assembly.addFormat( "zip" );
-        assembly.setId( "bundle" );
-        assembly.setIncludeBaseDirectory( false );
+        assembly.addFormat("zip");
+        assembly.setId("bundle");
+        assembly.setIncludeBaseDirectory(false);
 
-        try
-        {
-            Properties cpArtifacts = ClasspathUtils.read( project );
+        try {
+            Properties cpArtifacts = ClasspathUtils.read(project);
             String outputDirectory = project.getArtifactId() + "-" + project.getVersion() + "/dependencies";
 
-            for ( Iterator it = cpArtifacts.keySet().iterator(); it.hasNext(); )
-            {
+            for (Iterator it = cpArtifacts.keySet().iterator(); it.hasNext(); ) {
                 String artifactKey = (String) it.next();
-                
-                FileItem fi = ClasspathUtils.createFileItemForKey( artifactKey, cpArtifacts );
 
-                fi.setOutputDirectory( outputDirectory );
+                FileItem fi = ClasspathUtils.createFileItemForKey(artifactKey, cpArtifacts);
 
-                assembly.addFile( fi );
+                fi.setOutputDirectory(outputDirectory);
+
+                assembly.addFile(fi);
             }
         }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to create plugin bundle: " + e.getMessage(), e );
+        catch (IOException e) {
+            throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
         }
 
         FileItem fi = new FileItem();
-        fi.setSource( project.getArtifact().getFile().getPath() );
-        fi.setOutputDirectory( project.getArtifactId() + "-" + project.getVersion() );
+        fi.setSource(project.getArtifact().getFile().getPath());
+        fi.setOutputDirectory(project.getArtifactId() + "-" + project.getVersion());
 
-        assembly.addFile( fi );
+        assembly.addFile(fi);
 
-        try
-        {
-            File assemblyFile =
-                archiver.createArchive( assembly, bundle.getAssemblyFileName( assembly ), "zip", bundle );
-            projectHelper.attachArtifact( project, "zip", assembly.getId(), assemblyFile );
+        try {
+            File assemblyFile = archiver.createArchive(assembly, bundle.getAssemblyFileName(assembly), "zip", bundle);
+            projectHelper.attachArtifact(project, "zip", assembly.getId(), assemblyFile);
         }
-        catch ( ArchiveCreationException e )
-        {
-            throw new MojoExecutionException( "Failed to create plugin bundle: " + e.getMessage(), e );
+        catch (ArchiveCreationException e) {
+            throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
         }
-        catch ( AssemblyFormattingException e )
-        {
-            throw new MojoExecutionException( "Failed to create plugin bundle: " + e.getMessage(), e );
+        catch (AssemblyFormattingException e) {
+            throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
         }
-        catch ( InvalidAssemblerConfigurationException e )
-        {
-            throw new MojoExecutionException( "Failed to create plugin bundle: " + e.getMessage(), e );
+        catch (InvalidAssemblerConfigurationException e) {
+            throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
         }
     }
 }

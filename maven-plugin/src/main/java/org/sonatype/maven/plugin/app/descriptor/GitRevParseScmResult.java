@@ -19,6 +19,11 @@ package org.sonatype.maven.plugin.app.descriptor;
 
 import org.apache.maven.scm.ScmResult;
 
+/**
+ * ???
+ *
+ * @since 1.0
+ */
 public class GitRevParseScmResult
     extends ScmResult
 {
