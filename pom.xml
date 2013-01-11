@@ -30,6 +30,12 @@
 
   <version>1.0-SNAPSHOT</version>
 
+  <scm>
+    <connection>scm:git:git://github.com/sonatype/nexus-plugin-bundle.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/sonatype/nexus-plugin-bundle.git</developerConnection>
+    <url>https://github.com/sonatype/nexus-plugin-bundle</url>
+  </scm>
+
   <dependencyManagement>
     <dependencies>
 
