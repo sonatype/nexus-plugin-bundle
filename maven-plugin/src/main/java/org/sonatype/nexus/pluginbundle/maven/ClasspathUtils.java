@@ -38,32 +38,33 @@ import org.sonatype.aether.util.artifact.DefaultArtifact;
 public final class ClasspathUtils
 {
     /**
-     * Where detected plugin classpath state is written.
+     * Where detected plugin classpath state is written (under project.build.directory).
      */
-    private static final String CP_PROPSFILE = "nexus-plugin-bundle/plugin.classpath";
+    private static final String FILE_NAME = "nexus-plugin-bundle/plugin.classpath";
 
     private ClasspathUtils() {
         // empty
     }
 
+    /**
+     * {@code <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>}
+     */
     public static String formatArtifactKey(final Artifact artifact) {
-        StringBuilder fname = new StringBuilder();
+        StringBuilder buff = new StringBuilder();
 
-        // Supporting Aether format (see DefaultArtifact in aether-util):
-        // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>
-        fname.append(artifact.getGroupId())
+        buff.append(artifact.getGroupId())
             .append(":")
             .append(artifact.getArtifactId())
             .append(':')
             .append(artifact.getArtifactHandler().getExtension());
 
         if (!StringUtils.isBlank(artifact.getClassifier())) {
-            fname.append(':').append(artifact.getClassifier());
+            buff.append(':').append(artifact.getClassifier());
         }
 
-        fname.append(":").append(artifact.getVersion());
+        buff.append(":").append(artifact.getVersion());
 
-        return fname.toString();
+        return buff.toString();
     }
 
     private static org.sonatype.aether.artifact.Artifact formatArtifactFromKey(final String key, final Properties artifacts) {
@@ -73,20 +74,24 @@ public final class ClasspathUtils
     public static FileItem createFileItemForKey(final String key, final Properties artifacts) {
         org.sonatype.aether.artifact.Artifact artifact = ClasspathUtils.formatArtifactFromKey(key, artifacts);
 
-        String sourcePath = artifact.getFile().getAbsolutePath(); // cpArtifacts.getProperty( destName );
+        String sourcePath = artifact.getFile().getAbsolutePath();
 
         FileItem fileItem = new FileItem();
         fileItem.setSource(sourcePath);
 
-        StringBuilder artifactFileName = new StringBuilder(artifact.getArtifactId() + "-" + artifact.getVersion());
+        StringBuilder buff = new StringBuilder();
+
+        buff.append(artifact.getArtifactId())
+            .append("-")
+            .append(artifact.getVersion());
 
         if (!StringUtils.isBlank(artifact.getClassifier())) {
-            artifactFileName.append('-').append(artifact.getClassifier());
+            buff.append('-').append(artifact.getClassifier());
         }
 
-        artifactFileName.append(".").append(artifact.getExtension());
+        buff.append(".").append(artifact.getExtension());
 
-        fileItem.setDestName(artifactFileName.toString());
+        fileItem.setDestName(buff.toString());
 
         return fileItem;
     }
@@ -94,12 +99,13 @@ public final class ClasspathUtils
     public static Properties read(final MavenProject project)
         throws IOException
     {
-        File file = new File(project.getBuild().getDirectory(), CP_PROPSFILE);
+        File file = new File(project.getBuild().getDirectory(), FILE_NAME);
         if (!file.exists()) {
             throw new IOException("Cannot find: " + file + ". Did you call 'generate-metadata'?");
         }
 
         Properties props = new Properties();
+
         InputStream input = null;
         try {
             input = new BufferedInputStream(new FileInputStream(file));
@@ -121,10 +127,11 @@ public final class ClasspathUtils
             props.setProperty(name, file.getAbsolutePath());
         }
 
-        File file = new File(project.getBuild().getDirectory(), CP_PROPSFILE);
+        File file = new File(project.getBuild().getDirectory(), FILE_NAME);
+        file.getParentFile().mkdirs();
+
         OutputStream output = null;
         try {
-            file.getParentFile().mkdirs();
             output = new BufferedOutputStream(new FileOutputStream(file));
             props.store(output, null);
         }
