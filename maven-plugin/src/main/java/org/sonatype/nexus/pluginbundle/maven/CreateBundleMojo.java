@@ -40,8 +40,6 @@ public class CreateBundleMojo
     extends AbstractMojo
 {
     /**
-     * The current plugin project being built.
-     *
      * @parameter property="project"
      * @required
      * @readonly
@@ -49,8 +47,6 @@ public class CreateBundleMojo
     private MavenProject project;
 
     /**
-     * The current build session, for reference from the Assembly API.
-     *
      * @parameter property="session"
      * @required
      * @readonly
