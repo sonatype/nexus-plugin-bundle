@@ -38,6 +38,10 @@ import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.maven.plugin.app.ApplicationInformation;
 import org.sonatype.maven.plugin.app.ClasspathUtils;
+import org.sonatype.maven.plugin.app.descriptor.scm.GitRevParseCommand;
+import org.sonatype.maven.plugin.app.descriptor.scm.GitRevParseScmResult;
+import org.sonatype.maven.plugin.app.descriptor.scm.HgDebugIdCommand;
+import org.sonatype.maven.plugin.app.descriptor.scm.HgDebugIdScmResult;
 
 import java.io.File;
 import java.io.IOException;

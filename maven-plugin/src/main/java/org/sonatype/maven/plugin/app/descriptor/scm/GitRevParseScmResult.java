@@ -16,7 +16,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 
-package org.sonatype.maven.plugin.app.descriptor;
+package org.sonatype.maven.plugin.app.descriptor.scm;
 
 import org.apache.maven.scm.ScmResult;
 
@@ -25,19 +25,19 @@ import org.apache.maven.scm.ScmResult;
  *
  * @since 1.0
  */
-public class HgDebugIdScmResult
+public class GitRevParseScmResult
     extends ScmResult
 {
     private final String changeSetHash;
 
     private final String changeSetDate;
 
-    public HgDebugIdScmResult(final String commandLine,
-                              final String providerMessage,
-                              final String commandOutput,
-                              final boolean success,
-                              final String changeSetHash,
-                              final String changeSetDate)
+    public GitRevParseScmResult(final String commandLine,
+                                final String providerMessage,
+                                final String commandOutput,
+                                final boolean success,
+                                final String changeSetHash,
+                                final String changeSetDate)
     {
         super(commandLine, providerMessage, commandOutput, success);
 

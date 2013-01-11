@@ -16,7 +16,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 
-package org.sonatype.maven.plugin.app.descriptor;
+package org.sonatype.maven.plugin.app.descriptor.scm;
 
 import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
