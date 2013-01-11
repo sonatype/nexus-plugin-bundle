@@ -12,12 +12,6 @@
  */
 package org.sonatype.nexus.pluginbundle.maven;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Map.Entry;
-
 import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.plugins.model.ClasspathDependency;
 import org.sonatype.plugins.model.PluginDependency;
@@ -25,8 +19,16 @@ import org.sonatype.plugins.model.PluginLicense;
 import org.sonatype.plugins.model.PluginMetadata;
 import org.sonatype.plugins.model.io.xpp3.PluginModelXpp3Writer;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Map.Entry;
+
 /**
- * ???
+ * Generates nexus plugin descriptor XML file.
  *
  * @since 1.0
  */
@@ -34,94 +36,77 @@ public class PluginDescriptorGenerator
 {
     private final static String MODEL_ENCODING = "UTF-8";
 
-    public void generatePluginDescriptor(final PluginMetadataGenerationRequest request)
-        throws IOException
-    {
-        final PluginMetadata pluginMetadata = new PluginMetadata();
+    public void generate(final PluginDescriptorGenerationRequest request) throws IOException {
+        PluginMetadata metadata = new PluginMetadata();
 
-        // put it to request
-        request.setPluginMetadata(pluginMetadata);
+        request.setPluginMetadata(metadata);
 
-        pluginMetadata.setModelEncoding(MODEL_ENCODING);
+        metadata.setModelEncoding(MODEL_ENCODING);
 
-        pluginMetadata.setGroupId(request.getGroupId());
-        pluginMetadata.setArtifactId(request.getArtifactId());
-        pluginMetadata.setVersion(request.getVersion());
-        pluginMetadata.setName(request.getName());
-        pluginMetadata.setDescription(request.getDescription());
-        pluginMetadata.setPluginSite(request.getPluginSiteURL());
+        metadata.setGroupId(request.getGroupId());
+        metadata.setArtifactId(request.getArtifactId());
+        metadata.setVersion(request.getVersion());
+        metadata.setName(request.getName());
+        metadata.setDescription(request.getDescription());
+        metadata.setPluginSite(request.getPluginSiteURL());
 
-        pluginMetadata.setApplicationId(request.getApplicationId());
-        pluginMetadata.setApplicationEdition(request.getApplicationEdition());
-        pluginMetadata.setApplicationMinVersion(request.getApplicationMinVersion());
-        pluginMetadata.setApplicationMaxVersion(request.getApplicationMaxVersion());
+        // TODO: Sort out if this is actually needed in NX or if its legacy
+        metadata.setApplicationId("nexus");
+        //metadata.setApplicationEdition("n/a");
+        //metadata.setApplicationMinVersion("n/a");
+        //metadata.setApplicationMaxVersion("n/a");
 
-        pluginMetadata.setScmUri(request.getScmUrl());
-        pluginMetadata.setScmVersion(request.getScmVersion());
-        pluginMetadata.setScmTimestamp(request.getScmTimestamp());
+        metadata.setScmUri(request.getScmUrl());
+        metadata.setScmVersion(request.getScmVersion());
+        metadata.setScmTimestamp(request.getScmTimestamp());
 
-        // set the licenses
         if (request.getLicenses() != null) {
             for (Entry<String, String> licenseEntry : request.getLicenses().entrySet()) {
-                PluginLicense license = new PluginLicense();
-                license.setType(licenseEntry.getKey());
-                license.setUrl(licenseEntry.getValue());
+                PluginLicense entry = new PluginLicense();
+                entry.setType(licenseEntry.getKey());
+                entry.setUrl(licenseEntry.getValue());
+                metadata.addLicense(entry);
             }
         }
 
-        // set the dependencies
         if (request.getClasspathDependencies() != null) {
             for (GAVCoordinate dependency : request.getClasspathDependencies()) {
-                ClasspathDependency classpathDependency = new ClasspathDependency();
-                classpathDependency.setGroupId(dependency.getGroupId());
-                classpathDependency.setArtifactId(dependency.getArtifactId());
-                classpathDependency.setVersion(dependency.getVersion());
-                classpathDependency.setClassifier(dependency.getClassifier());
-                classpathDependency.setType(dependency.getType());
-                classpathDependency.setShared(dependency.isShared());
-
-                pluginMetadata.addClasspathDependency(classpathDependency);
+                ClasspathDependency entry = new ClasspathDependency();
+                entry.setGroupId(dependency.getGroupId());
+                entry.setArtifactId(dependency.getArtifactId());
+                entry.setVersion(dependency.getVersion());
+                entry.setClassifier(dependency.getClassifier());
+                entry.setType(dependency.getType());
+                entry.setShared(dependency.isShared());
+                metadata.addClasspathDependency(entry);
             }
         }
 
         if (request.getPluginDependencies() != null) {
             for (GAVCoordinate dependency : request.getPluginDependencies()) {
-                PluginDependency pluginDependency = new PluginDependency();
-                pluginDependency.setGroupId(dependency.getGroupId());
-                pluginDependency.setArtifactId(dependency.getArtifactId());
-                pluginDependency.setVersion(dependency.getVersion());
-
-                pluginMetadata.addPluginDependency(pluginDependency);
+                PluginDependency entry = new PluginDependency();
+                entry.setGroupId(dependency.getGroupId());
+                entry.setArtifactId(dependency.getArtifactId());
+                entry.setVersion(dependency.getVersion());
+                metadata.addPluginDependency(entry);
             }
         }
 
         if (request.getOutputFile() != null) {
-            // write file
-            writePluginMetadata(pluginMetadata, request.getOutputFile());
+            write(metadata, request.getOutputFile());
         }
-
     }
 
-    private void writePluginMetadata(final PluginMetadata pluginMetadata, final File outputFile)
-        throws IOException
-    {
-        // make sure the file's parent is created
+    private void write(final PluginMetadata metadata, final File outputFile) throws IOException {
         outputFile.getParentFile().mkdirs();
-        FileOutputStream fos = null;
-        OutputStreamWriter streamWriter = null;
-
-        // FIXME: Buffer
-
+        Writer output = null;
         try {
-            fos = new FileOutputStream(outputFile);
-            streamWriter = new OutputStreamWriter(fos, MODEL_ENCODING);
-
+            output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), MODEL_ENCODING));
             PluginModelXpp3Writer writer = new PluginModelXpp3Writer();
-            writer.write(streamWriter, pluginMetadata);
+            writer.write(output, metadata);
         }
         finally {
-            IOUtil.close(streamWriter);
-            IOUtil.close(fos);
+            IOUtil.close(output);
         }
     }
 }

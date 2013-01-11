@@ -12,31 +12,28 @@
  */
 package org.sonatype.nexus.pluginbundle.maven;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Properties;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.assembly.InvalidAssemblerConfigurationException;
-import org.apache.maven.plugin.assembly.archive.ArchiveCreationException;
 import org.apache.maven.plugin.assembly.archive.AssemblyArchiver;
-import org.apache.maven.plugin.assembly.format.AssemblyFormattingException;
-import org.apache.maven.plugin.assembly.io.AssemblyReadException;
 import org.apache.maven.plugin.assembly.io.AssemblyReader;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Properties;
+
 /**
  * Create a plugin bundle artifact attach it to the plugins project.
  *
  * @goal create-bundle
  * @phase package
+ *
  * @since 1.0
  */
 public class CreateBundleMojo
@@ -45,7 +42,7 @@ public class CreateBundleMojo
     /**
      * The current plugin project being built.
      *
-     * @parameter default-value="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -54,7 +51,7 @@ public class CreateBundleMojo
     /**
      * The current build session, for reference from the Assembly API.
      *
-     * @parameter default-value="${session}"
+     * @parameter property="session"
      * @required
      * @readonly
      */
@@ -68,20 +65,9 @@ public class CreateBundleMojo
     private BundleConfiguration bundle;
 
     /**
-     * Alternative assembly descriptor. If not specified, default assembly descriptor will be used instead.
-     *
-     * @parameter
-     * @readonly
-     */
-    private File assemblyDescriptor;
-
-    /**
-     * Assembly manager component that is responsible for creating the plugin bundle assembly and attaching it to the
-     * current project.
-     *
      * @component
      */
-    private AssemblyArchiver archiver;
+    private AssemblyArchiver assemblyArchiver;
 
     /**
      * @component
@@ -89,76 +75,53 @@ public class CreateBundleMojo
     private AssemblyReader assemblyReader;
 
     /**
-     * Component used by the {@link AssemblyArchiver} to attach the bundle artifact to the current project.
-     *
      * @component
      */
     private MavenProjectHelper projectHelper;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (bundle == null) {
-            bundle = new BundleConfiguration(project, session);
+            bundle = new BundleConfiguration();
         }
-        else {
-            bundle.initDefaults(project, session);
-        }
+        bundle.initDefaults(project, session);
 
-        Assembly assembly;
-
-        if (assemblyDescriptor != null) {
-            try {
-                assembly = assemblyReader.getAssemblyFromDescriptorFile(assemblyDescriptor, bundle);
-            }
-            catch (AssemblyReadException e) {
-                throw new MojoExecutionException("Could not read assembly descriptor: " + assemblyDescriptor.getAbsolutePath(), e);
-            }
-            catch (InvalidAssemblerConfigurationException e) {
-                throw new MojoExecutionException("Invalid assembly descriptor: " + assemblyDescriptor.getAbsolutePath(), e);
-            }
-        }
-        else {
-            assembly = new Assembly();
-        }
-
+        Assembly assembly = new Assembly();
         assembly.addFormat("zip");
         assembly.setId("bundle");
         assembly.setIncludeBaseDirectory(false);
 
+        // Write included plugin dependencies into the the /dependencies directory
         try {
-            Properties cpArtifacts = ClasspathUtils.read(project);
+            Properties artifacts = ClasspathUtils.read(project);
             String outputDirectory = project.getArtifactId() + "-" + project.getVersion() + "/dependencies";
 
-            for (Iterator it = cpArtifacts.keySet().iterator(); it.hasNext(); ) {
+            for (Iterator it = artifacts.keySet().iterator(); it.hasNext(); ) {
                 String artifactKey = (String) it.next();
-
-                FileItem fi = ClasspathUtils.createFileItemForKey(artifactKey, cpArtifacts);
-
-                fi.setOutputDirectory(outputDirectory);
-
-                assembly.addFile(fi);
+                FileItem fileItem = ClasspathUtils.createFileItemForKey(artifactKey, artifacts);
+                fileItem.setOutputDirectory(outputDirectory);
+                assembly.addFile(fileItem);
             }
         }
         catch (IOException e) {
             throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
         }
 
+        // Add the main plugin artifact
         FileItem fileItem = new FileItem();
         fileItem.setSource(project.getArtifact().getFile().getPath());
         fileItem.setOutputDirectory(project.getArtifactId() + "-" + project.getVersion());
         assembly.addFile(fileItem);
 
+        // Generate the bundle assembly
+        File assemblyFile;
         try {
-            File assemblyFile = archiver.createArchive(assembly, bundle.getAssemblyFileName(assembly), "zip", bundle);
-            projectHelper.attachArtifact(project, "zip", assembly.getId(), assemblyFile);
+            assemblyFile = assemblyArchiver.createArchive(assembly, bundle.getAssemblyFileName(assembly), "zip", bundle);
         }
-        catch (ArchiveCreationException e) {
+        catch (Exception e) {
             throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
         }
-        catch (AssemblyFormattingException e) {
-            throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
-        }
-        catch (InvalidAssemblerConfigurationException e) {
-            throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
-        }
+
+        // Attach bundle assembly to the project
+        projectHelper.attachArtifact(project, "zip", assembly.getId(), assemblyFile);
     }
 }

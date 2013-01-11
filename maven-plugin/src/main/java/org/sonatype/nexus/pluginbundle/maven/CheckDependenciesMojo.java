@@ -23,11 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Check that any application plugin dependencies are specified with 'provided' scope,
- * along with any dependencies that have a groupId that belongs in the application's core.
- *
- * Specifying these as 'provided' scope means that the plugin expects its runtime environment to provide them,
- * which in the case of core dependencies and other plugins, is appropriate.
+ * Check that any 'nexus-plugin' dependencies are specified with 'provided' scope.
  *
  * @goal check-dependencies
  * @phase initialize
@@ -39,34 +35,24 @@ public class CheckDependenciesMojo
     extends AbstractMojo
 {
     /**
-     * @parameter default-value="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
     private MavenProject project;
 
-    private ApplicationInformation mapping = new NexusApplicationInformation();
-
-    @SuppressWarnings("unchecked")
     public void execute() throws MojoExecutionException, MojoFailureException {
         Set<Artifact> dependencies = project.getDependencyArtifacts();
 
         if (dependencies != null) {
             List<String> failures = new ArrayList<String>();
-            for (Artifact dep : dependencies) {
-                if (Artifact.SCOPE_PROVIDED.equals(dep.getScope())) {
-                    getLog().info("Found dependency with 'provided' scope: " + dep.getDependencyConflictId() + "; ignoring");
-                    continue;
-                }
-                else if (Artifact.SCOPE_TEST.equals(dep.getScope())) {
-                    getLog().info("Found dependency with 'test' scope: " + dep.getDependencyConflictId() + "; ignoring");
-                    continue;
-                }
 
-                // TODO: Sort out WTF this is for and why its needed
-                if (mapping.matchesCoreGroupIds(dep.getGroupId())
-                    || mapping.getPluginPackaging().equals(dep.getArtifactHandler().getPackaging())) {
-                    failures.add(dep.getId());
+            // find any nexus-plugin deps which are not scope=provided
+            for (Artifact dep : dependencies) {
+                if ("nexus-plugin".equals(dep.getArtifactHandler().getPackaging())) {
+                    if (!Artifact.SCOPE_PROVIDED.equals(dep.getScope())) {
+                        failures.add(dep.getId());
+                    }
                 }
             }
 
@@ -79,9 +65,6 @@ public class CheckDependenciesMojo
                 }
 
                 throw new MojoExecutionException(message.toString());
-            }
-            else {
-                getLog().info("All Nexus dependencies in this project seem to have correct scope");
             }
         }
     }

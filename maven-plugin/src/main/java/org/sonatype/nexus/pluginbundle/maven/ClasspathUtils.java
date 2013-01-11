@@ -12,11 +12,14 @@
  */
 package org.sonatype.nexus.pluginbundle.maven;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 import java.util.Set;
 
@@ -34,7 +37,10 @@ import org.sonatype.aether.util.artifact.DefaultArtifact;
  */
 public final class ClasspathUtils
 {
-    private static final String CP_PROPSFILE = "classpath.properties";
+    /**
+     * Where detected plugin classpath state is written.
+     */
+    private static final String CP_PROPSFILE = "nexus-plugin-bundle/plugin.classpath";
 
     private ClasspathUtils() {
         // empty
@@ -45,8 +51,11 @@ public final class ClasspathUtils
 
         // Supporting Aether format (see DefaultArtifact in aether-util):
         // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>
-        fname.append(artifact.getGroupId()).append(":").append(artifact.getArtifactId()).append(':').append(
-            artifact.getArtifactHandler().getExtension());
+        fname.append(artifact.getGroupId())
+            .append(":")
+            .append(artifact.getArtifactId())
+            .append(':')
+            .append(artifact.getArtifactHandler().getExtension());
 
         if (!StringUtils.isBlank(artifact.getClassifier())) {
             fname.append(':').append(artifact.getClassifier());
@@ -57,20 +66,17 @@ public final class ClasspathUtils
         return fname.toString();
     }
 
-    private static org.sonatype.aether.artifact.Artifact formatArtifactFromKey(final String key,
-                                                                               final Properties cpArtifacts)
-    {
-        return new DefaultArtifact(key).setFile(new File(cpArtifacts.getProperty(key)));
+    private static org.sonatype.aether.artifact.Artifact formatArtifactFromKey(final String key, final Properties artifacts) {
+        return new DefaultArtifact(key).setFile(new File(artifacts.getProperty(key)));
     }
 
-    public static FileItem createFileItemForKey(final String key, final Properties cpArtifacts) {
-        org.sonatype.aether.artifact.Artifact artifact = ClasspathUtils.formatArtifactFromKey(key, cpArtifacts);
+    public static FileItem createFileItemForKey(final String key, final Properties artifacts) {
+        org.sonatype.aether.artifact.Artifact artifact = ClasspathUtils.formatArtifactFromKey(key, artifacts);
 
         String sourcePath = artifact.getFile().getAbsolutePath(); // cpArtifacts.getProperty( destName );
 
-        FileItem fi = new FileItem();
-
-        fi.setSource(sourcePath);
+        FileItem fileItem = new FileItem();
+        fileItem.setSource(sourcePath);
 
         StringBuilder artifactFileName = new StringBuilder(artifact.getArtifactId() + "-" + artifact.getVersion());
 
@@ -80,57 +86,50 @@ public final class ClasspathUtils
 
         artifactFileName.append(".").append(artifact.getExtension());
 
-        fi.setDestName(artifactFileName.toString());
+        fileItem.setDestName(artifactFileName.toString());
 
-        return fi;
+        return fileItem;
     }
 
     public static Properties read(final MavenProject project)
         throws IOException
     {
-        File cpFile = new File(project.getBuild().getDirectory(), CP_PROPSFILE);
-        if (!cpFile.exists()) {
-            throw new IOException("Cannot find: " + cpFile + ". Did you call 'generate-metadata'?");
+        File file = new File(project.getBuild().getDirectory(), CP_PROPSFILE);
+        if (!file.exists()) {
+            throw new IOException("Cannot find: " + file + ". Did you call 'generate-metadata'?");
         }
 
-        Properties p = new Properties();
-        FileInputStream stream = null;
+        Properties props = new Properties();
+        InputStream input = null;
         try {
-            stream = new FileInputStream(cpFile);
-            p.load(stream);
+            input = new BufferedInputStream(new FileInputStream(file));
+            props.load(input);
         }
         finally {
-            IOUtil.close(stream);
+            IOUtil.close(input);
         }
 
-        return p;
+        return props;
     }
 
-    public static void write(final Set<Artifact> classpathArtifacts, final MavenProject project)
-        throws IOException
-    {
-        Properties p = new Properties();
+    public static void write(final Set<Artifact> classpathArtifacts, final MavenProject project) throws IOException {
+        Properties props = new Properties();
 
         for (Artifact artifact : classpathArtifacts) {
-            File artifactFile = artifact.getFile();
-
-            String fname = formatArtifactKey(artifact);
-
-            p.setProperty(fname, artifactFile.getAbsolutePath());
+            File file = artifact.getFile();
+            String name = formatArtifactKey(artifact);
+            props.setProperty(name, file.getAbsolutePath());
         }
 
-        File cpFile = new File(project.getBuild().getDirectory(), CP_PROPSFILE);
-        FileOutputStream stream = null;
+        File file = new File(project.getBuild().getDirectory(), CP_PROPSFILE);
+        OutputStream output = null;
         try {
-            cpFile.getParentFile().mkdirs();
-            stream = new FileOutputStream(cpFile);
-
-            p.store(stream, "Written on: " + new Date()
-                + " (key format is <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>)");
+            file.getParentFile().mkdirs();
+            output = new BufferedOutputStream(new FileOutputStream(file));
+            props.store(output, null);
         }
         finally {
-            IOUtil.close(stream);
+            IOUtil.close(output);
         }
     }
-
 }

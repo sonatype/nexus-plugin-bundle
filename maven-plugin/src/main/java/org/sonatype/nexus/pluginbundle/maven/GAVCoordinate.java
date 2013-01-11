@@ -87,53 +87,43 @@ public class GAVCoordinate
         return shared;
     }
 
-    public String toCompositeForm() {
+    public String toString() {
         StringBuilder buff = new StringBuilder();
 
-        buff.append(String.valueOf(getGroupId()))
+        buff.append(String.valueOf(groupId))
             .append(":")
-            .append(String.valueOf(getArtifactId()))
+            .append(String.valueOf(artifactId))
             .append(":")
-            .append(String.valueOf(getVersion()));
+            .append(String.valueOf(version));
 
-        if (!StringUtils.isEmpty(getClassifier())) {
-            buff.append(":").append(getClassifier());
+        if (!StringUtils.isEmpty(classifier)) {
+            buff.append(":").append(classifier);
         }
 
-        if (!StringUtils.isEmpty(getType()) && !StringUtils.equals(DEFAULT_TYPE, getType())) {
-            if (StringUtils.isEmpty(getClassifier())) {
+        if (!StringUtils.isEmpty(type) && !StringUtils.equals(DEFAULT_TYPE, type)) {
+            if (StringUtils.isEmpty(classifier)) {
                 buff.append(":");
             }
 
-            buff.append(":").append(getType());
+            buff.append(":").append(type);
         }
 
         return buff.toString();
     }
 
-    // ==
-
-    public String toString() {
-        return toCompositeForm();
-    }
-
     public int hashCode() {
         int hash = 7;
 
-        hash = 31 * hash + (getGroupId() != null ? getGroupId().hashCode() : 0);
-
-        hash = 31 * hash + (getArtifactId() != null ? getArtifactId().hashCode() : 0);
-
-        hash = 31 * hash + (getVersion() != null ? getVersion().hashCode() : 0);
-
-        hash = 31 * hash + (getClassifier() != null ? getClassifier().hashCode() : 0);
-
-        hash = 31 * hash + (getType() != null ? getType().hashCode() : 0);
+        hash = 31 * hash + (groupId != null ? groupId.hashCode() : 0);
+        hash = 31 * hash + (artifactId != null ? artifactId.hashCode() : 0);
+        hash = 31 * hash + (version != null ? version.hashCode() : 0);
+        hash = 31 * hash + (classifier != null ? classifier.hashCode() : 0);
+        hash = 31 * hash + (type != null ? type.hashCode() : 0);
 
         return hash;
     }
 
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -144,11 +134,10 @@ public class GAVCoordinate
 
         GAVCoordinate other = (GAVCoordinate) obj;
 
-        return StringUtils.equals(getGroupId(), other.getGroupId())
-            && StringUtils.equals(getArtifactId(), other.getArtifactId())
-            && StringUtils.equals(getVersion(), other.getVersion())
-            && StringUtils.equals(getClassifier(), other.getClassifier())
-            && StringUtils.equals(getType(), other.getType());
+        return StringUtils.equals(groupId, other.groupId)
+            && StringUtils.equals(artifactId, other.artifactId)
+            && StringUtils.equals(version, other.version)
+            && StringUtils.equals(classifier, other.classifier)
+            && StringUtils.equals(type, other.type);
     }
-
 }

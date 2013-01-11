@@ -10,6 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
+
 package org.sonatype.nexus.pluginbundle.maven;
 
 import org.apache.maven.artifact.Artifact;
@@ -28,7 +29,6 @@ import org.apache.maven.scm.provider.svn.AbstractSvnScmProvider;
 import org.apache.maven.scm.provider.svn.command.info.SvnInfoItem;
 import org.apache.maven.scm.provider.svn.command.info.SvnInfoScmResult;
 import org.apache.maven.scm.repository.ScmRepository;
-import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseCommand;
 import org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseScmResult;
@@ -41,24 +41,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
+import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
+import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME;
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
+
 /**
  * Generates a plugins {@code plugin.xml} descriptor file based on the project's pom and class annotations.
  *
  * @goal generate-metadata
  * @phase process-classes
  * @requiresDependencyResolution test
- *
  * @since 1.0
  */
-public class PluginDescriptorMojo
+public class GenerateMetadataMojo
     extends AbstractMojo
 {
     /**
-     * The output location for the generated plugin descriptor.
-     *
-     * @parameter
+     * @component
      */
-    private File generatedPluginMetadata;
+    private ScmManager scmManager;
 
     /**
      * @parameter property="project"
@@ -68,34 +70,11 @@ public class PluginDescriptorMojo
     private MavenProject mavenProject;
 
     /**
-     * The ID of the target application. For example if this plugin was for the Nexus Repository Manager, the ID would be, 'nexus'.
+     * The output location for the generated plugin descriptor.
      *
-     * @parameter
+     * @parameter expression="${project.build.outputDirectory}/META-INF/nexus/plugin.xml"
      */
-    private String applicationId;
-
-    /**
-     * The edition of the target application. Some applications come in multiple flavors, OSS, PRO, Free, light, etc.
-     *
-     * @parameter default-value="OSS"
-     */
-    private String applicationEdition;
-
-    /**
-     * The minimum product version of the target application.
-     *
-     * @parameter
-     */
-    private String applicationMinVersion;
-
-    /**
-     * The maximum product version of the target application.
-     *
-     * @parameter
-     */
-    private String applicationMaxVersion;
-
-    private ApplicationInformation mapping = new NexusApplicationInformation();
+    private File generatedPluginMetadata;
 
     /**
      * @parameter property="project.scm.developerConnection"
@@ -118,21 +97,15 @@ public class PluginDescriptorMojo
     private String password;
 
     /**
-     * @component
-     */
-    private ScmManager scmManager;
-
-    /**
-     * The list of classpath dependencies to be excluded from bundling for some reason (for example because you are
-     * shading it into plugin artifact).
+     * The list of classpath dependencies to be excluded from bundling for some reason (for example because you are shading it into plugin artifact).
      *
      * @parameter
      */
     private List<String> classpathDependencyExcludes;
 
     /**
-     * A list of groupId:artifactId references to non-plugin dependencies that should be shared along with main plugin
-     * JAR to dependants of this plugin.
+     * A list of groupId:artifactId references to non-plugin dependencies that should be shared along with main plugin JAR to dependants of this
+     * plugin.
      *
      * @parameter
      */
@@ -160,14 +133,12 @@ public class PluginDescriptorMojo
     private String pluginSiteUrl;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!mavenProject.getPackaging().equals(mapping.getPluginPackaging())) {
-            getLog().info("Project is not of packaging type: " + mapping.getPluginPackaging());
+        if (!mavenProject.getPackaging().equals("nexus-plugin")) {
+            getLog().info("Project is not of packaging type: nexus-plugin");
             return;
         }
 
-        initConfig();
-
-        PluginMetadataGenerationRequest request = new PluginMetadataGenerationRequest();
+        PluginDescriptorGenerationRequest request = new PluginDescriptorGenerationRequest();
         request.setGroupId(mavenProject.getGroupId());
         request.setArtifactId(mavenProject.getArtifactId());
         request.setVersion(mavenProject.getVersion());
@@ -175,11 +146,6 @@ public class PluginDescriptorMojo
         request.setName(pluginName != null ? pluginName : mavenProject.getName());
         request.setDescription(pluginDescription != null ? pluginDescription : mavenProject.getDescription());
         request.setPluginSiteURL(pluginSiteUrl != null ? pluginSiteUrl : mavenProject.getUrl());
-
-        request.setApplicationId(applicationId);
-        request.setApplicationEdition(applicationEdition);
-        request.setApplicationMinVersion(applicationMinVersion);
-        request.setApplicationMaxVersion(applicationMaxVersion);
 
         // licenses
         if (mavenProject.getLicenses() != null) {
@@ -198,12 +164,12 @@ public class PluginDescriptorMojo
 
             Set<String> excludedArtifactIds = new HashSet<String>();
 
+            // FIXME: Drop need for label, the following is already complex and hard to comprehend
             artifactLoop:
             for (Artifact artifact : artifacts) {
-                if (artifact.getType().equals(mapping.getPluginPackaging())) {
-                    if (!Artifact.SCOPE_PROVIDED.equals(artifact.getScope())) {
-                        throw new MojoFailureException(
-                            "Plugin dependency \"" + artifact.getDependencyConflictId() + "\" must have the \"provided\" scope!");
+                if (artifact.getType().equals("nexus-plugin")) {
+                    if (!SCOPE_PROVIDED.equals(artifact.getScope())) {
+                        throw new MojoFailureException("Nexus plugin dependency must use 'provided' scope: " + artifact.getDependencyConflictId());
                     }
 
                     excludedArtifactIds.add(artifact.getId());
@@ -217,18 +183,16 @@ public class PluginDescriptorMojo
                         artifact.getType(),
                         false));
                 }
-                else if (Artifact.SCOPE_PROVIDED.equals(artifact.getScope())
-                    || Artifact.SCOPE_TEST.equals(artifact.getScope())) {
+                else if (SCOPE_PROVIDED.equals(artifact.getScope()) || SCOPE_TEST.equals(artifact.getScope())) {
                     excludedArtifactIds.add(artifact.getId());
                 }
-                else if ((Artifact.SCOPE_COMPILE.equals(artifact.getScope()) || Artifact.SCOPE_RUNTIME.equals(artifact.getScope()))
-                    && (!mapping.matchesCoreGroupIds(artifact.getGroupId()))) {
+                else if (SCOPE_COMPILE.equals(artifact.getScope()) || SCOPE_RUNTIME.equals(artifact.getScope())) {
                     if (artifact.getDependencyTrail() != null) {
                         for (String trailId : artifact.getDependencyTrail()) {
                             if (excludedArtifactIds.contains(trailId)) {
-                                getLog().debug( "Dependency artifact: " + artifact.getId()
-                                        + " is part of the transitive dependency set for a dependency with 'provided' or 'test' scope: "
-                                        + trailId + "\nThis artifact will be excluded from the plugin classpath");
+                                getLog().debug(String.format(
+                                    "Dependency artifact: %s is part of the transitive dependency set for a dependency with 'provided' or 'test' scope: %s\n" +
+                                        "This artifact will be excluded from the plugin classpath", artifact.getId(), trailId));
                                 continue artifactLoop;
                             }
                         }
@@ -237,21 +201,22 @@ public class PluginDescriptorMojo
                     final String artifactKey = ClasspathUtils.formatArtifactKey(artifact);
 
                     if (!isExcluded(artifactKey)) {
-                        final boolean isShared = sharedDependencies != null &&
-                            sharedDependencies.contains(artifact.getGroupId() + ":" + artifact.getArtifactId());
+                        boolean isShared =
+                            sharedDependencies != null && sharedDependencies.contains(artifact.getGroupId() + ":" + artifact.getArtifactId());
 
                         // classpath dependencies uses baseVersion, and let PluginManager resolve them runtime
-                        // this enables easy development turnaround, by not having recompiling the plugin to drop-in
-                        // newer snapshot
-                        request.addClasspathDependency(new GAVCoordinate(artifact.getGroupId(),
-                            artifact.getArtifactId(), artifact.getBaseVersion(), artifact.getClassifier(),
-                            artifact.getType(), isShared));
+                        // this enables easy development turnaround, by not having recompiling the plugin to drop-in newer snapshot
+                        request.addClasspathDependency(new GAVCoordinate(
+                            artifact.getGroupId(),
+                            artifact.getArtifactId(),
+                            artifact.getBaseVersion(),
+                            artifact.getClassifier(),
+                            artifact.getType(),
+                            isShared));
                         classpathArtifacts.add(artifact);
                     }
                     else {
-                        getLog().info(
-                            "Classpath dependency [" + artifactKey
-                                + "] is excluded from plugin bundle by user configuration");
+                        getLog().info("Classpath dependency excluded from plugin bundle by user configuration: " + artifactKey);
                     }
                 }
             }
@@ -259,9 +224,8 @@ public class PluginDescriptorMojo
 
         request.setOutputFile(generatedPluginMetadata);
 
-        // do the work
         try {
-            new PluginDescriptorGenerator().generatePluginDescriptor(request);
+            new PluginDescriptorGenerator().generate(request);
         }
         catch (IOException e) {
             throw new MojoFailureException("Failed to generate plugin xml file: " + e.getMessage(), e);
@@ -273,23 +237,6 @@ public class PluginDescriptorMojo
         catch (IOException e) {
             throw new MojoFailureException("Failed to generate classpath properties file: " + e.getMessage(), e);
         }
-    }
-
-    private void initConfig() throws MojoFailureException {
-        if (generatedPluginMetadata == null) {
-            try {
-                generatedPluginMetadata = mapping.getPluginMetadataFile(mavenProject);
-            }
-            catch (InterpolationException e) {
-                throw new MojoFailureException("Cannot calculate plugin metadata file location from expression: "
-                    + mapping.getPluginMetadataPath(), e);
-            }
-        }
-
-        applicationId = applicationId == null ? mapping.getApplicationId() : applicationId;
-        applicationEdition = applicationEdition == null ? mapping.getApplicationEdition() : applicationEdition;
-        applicationMinVersion = applicationMinVersion == null ? mapping.getApplicationMinVersion() : applicationMinVersion;
-        applicationMaxVersion = applicationMaxVersion == null ? mapping.getApplicationMaxVersion() : applicationMaxVersion;
     }
 
     protected boolean isExcluded(final String key) {
@@ -308,7 +255,7 @@ public class PluginDescriptorMojo
 
     // SCM
 
-    protected void fillScmInfo(final PluginMetadataGenerationRequest request) {
+    protected void fillScmInfo(final PluginDescriptorGenerationRequest request) {
         try {
             final ScmRepository repository = getScmRepository();
             request.setScmUrl(urlScm);
@@ -326,7 +273,7 @@ public class PluginDescriptorMojo
             }
         }
         catch (ScmException e) {
-            getLog().warn("Failed to get scm information: " + e.getMessage());
+            getLog().warn("Failed to get SCM information: " + e.getMessage());
             getLog().debug(e);
         }
     }
@@ -351,7 +298,7 @@ public class PluginDescriptorMojo
         return repository;
     }
 
-    protected void fillSvnScmInfo(final PluginMetadataGenerationRequest request, final ScmRepository repository) throws ScmException {
+    protected void fillSvnScmInfo(final PluginDescriptorGenerationRequest request, final ScmRepository repository) throws ScmException {
         AbstractSvnScmProvider provider = (AbstractSvnScmProvider) scmManager.getProviderByType("svn");
 
         SvnInfoScmResult result = provider.info(
@@ -367,7 +314,7 @@ public class PluginDescriptorMojo
         request.setScmTimestamp(info.getLastChangedDate());
     }
 
-    protected void fillGitScmInfo(final PluginMetadataGenerationRequest request, final ScmRepository repository) throws ScmException {
+    protected void fillGitScmInfo(final PluginDescriptorGenerationRequest request, final ScmRepository repository) throws ScmException {
         AbstractGitScmProvider provider = (AbstractGitScmProvider) scmManager.getProviderByType("git");
 
         GitRevParseCommand cmd = new GitRevParseCommand();
@@ -385,7 +332,7 @@ public class PluginDescriptorMojo
         request.setScmTimestamp(result.getChangeSetDate());
     }
 
-    protected void fillHgScmInfo(final PluginMetadataGenerationRequest request, final ScmRepository repository) throws ScmException {
+    protected void fillHgScmInfo(final PluginDescriptorGenerationRequest request, final ScmRepository repository) throws ScmException {
         HgScmProvider provider = (HgScmProvider) scmManager.getProviderByType("hg");
 
         HgDebugIdCommand cmd = new HgDebugIdCommand();

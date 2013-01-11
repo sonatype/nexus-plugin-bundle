@@ -67,6 +67,9 @@
       <artifactId>plexus-utils</artifactId>
     </dependency>
 
+    <!--
+    FIXME: Sort out changes needed to update this to the latest version.
+    -->
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-assembly-plugin</artifactId>

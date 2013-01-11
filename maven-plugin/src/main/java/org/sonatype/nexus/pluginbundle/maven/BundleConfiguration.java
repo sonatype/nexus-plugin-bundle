@@ -51,10 +51,6 @@ public class BundleConfiguration
         // empty
     }
 
-    public BundleConfiguration(final MavenProject project, final MavenSession session) {
-        initDefaults(project, session);
-    }
-
     public void initDefaults(final MavenProject project, final MavenSession session) {
         this.project = project;
         this.session = session;
@@ -151,7 +147,6 @@ public class BundleConfiguration
         return session.getProjects();
     }
 
-    @SuppressWarnings("unchecked")
     public List getRemoteRepositories() {
         return project.getRemoteArtifactRepositories();
     }
@@ -169,11 +164,11 @@ public class BundleConfiguration
     }
 
     public File getTemporaryRootDirectory() {
-        return new File(project.getBuild().getDirectory(), "nexus-bundle-tmp");
+        return new File(project.getBuild().getDirectory(), "nexus-plugin-bundle/tmp");
     }
 
     public File getWorkingDirectory() {
-        return new File(project.getBuild().getDirectory(), "nexus-bundle/work");
+        return new File(project.getBuild().getDirectory(), "nexus-plugin-bundle/work");
     }
 
     public boolean isAssemblyIdAppended() {

@@ -25,8 +25,10 @@ import org.sonatype.plugins.model.PluginMetadata;
  * Request for generating plugin metadata.
  *
  * @since 1.0
+ *
+ * @see PluginDescriptorGenerator
  */
-public class PluginMetadataGenerationRequest
+public class PluginDescriptorGenerationRequest
 {
     private String groupId;
 
@@ -39,14 +41,6 @@ public class PluginMetadataGenerationRequest
     private String description;
 
     private String pluginSiteURL;
-
-    private String applicationId;
-
-    private String applicationEdition;
-
-    private String applicationMinVersion;
-
-    private String applicationMaxVersion;
 
     private String scmUrl;
 
@@ -127,46 +121,6 @@ public class PluginMetadataGenerationRequest
     public void setPluginSiteURL( String pluginSiteURL )
     {
         this.pluginSiteURL = pluginSiteURL;
-    }
-
-    public String getApplicationId()
-    {
-        return applicationId;
-    }
-
-    public void setApplicationId( String applicationId )
-    {
-        this.applicationId = applicationId;
-    }
-
-    public String getApplicationEdition()
-    {
-        return applicationEdition;
-    }
-
-    public void setApplicationEdition( String applicationEdition )
-    {
-        this.applicationEdition = applicationEdition;
-    }
-
-    public String getApplicationMinVersion()
-    {
-        return applicationMinVersion;
-    }
-
-    public void setApplicationMinVersion( String applicationMinVersion )
-    {
-        this.applicationMinVersion = applicationMinVersion;
-    }
-
-    public String getApplicationMaxVersion()
-    {
-        return applicationMaxVersion;
-    }
-
-    public void setApplicationMaxVersion( String applicationMaxVersion )
-    {
-        this.applicationMaxVersion = applicationMaxVersion;
     }
 
     public void addLicense( String type, String url )
