@@ -130,6 +130,12 @@
       <artifactId>maven-scm-provider-hg</artifactId>
       <version>${maven.scm.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.sonatype.sisu.litmus</groupId>
+      <artifactId>litmus-testsupport</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>
