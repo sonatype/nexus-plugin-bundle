@@ -159,7 +159,6 @@
           </association>
           <required>false</required>
         </field>
-
         <field>
           <name>classpathDependencies</name>
           <version>1.0.0+</version>
@@ -180,8 +179,8 @@
           </association>
           <required>false</required>
         </field>
-
       </fields>
+
       <codeSegments>
         <codeSegment>
           <version>1.0.0+</version>
