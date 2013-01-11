@@ -48,6 +48,9 @@
             <configuration>
               <packageWithVersion>false</packageWithVersion>
               <useJava5>true</useJava5>
+              <!--
+              NOTE: Retaining versions from app-lifecycle for legacy compatibility.
+              -->
               <packagedVersions>
                 <packagedVersion>1.0.0</packagedVersion>
               </packagedVersions>

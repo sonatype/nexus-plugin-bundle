@@ -35,8 +35,11 @@
     <value>modelVersion</value>
   </versionDefinition>
 
+  <!--
+  NOTE: Retaining versions from app-lifecycle for legacy compatibility.
+  -->
+
   <classes>
-    <!-- ROOT -->
     <class rootElement="true" xml.tagName="plugin">
       <name>PluginMetadata</name>
       <version>1.0.0+</version>
