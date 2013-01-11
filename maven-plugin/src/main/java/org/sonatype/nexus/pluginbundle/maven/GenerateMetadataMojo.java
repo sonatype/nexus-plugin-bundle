@@ -70,13 +70,6 @@ public class GenerateMetadataMojo
     private MavenProject mavenProject;
 
     /**
-     * The output location for the generated plugin descriptor.
-     *
-     * @parameter expression="${project.build.outputDirectory}/META-INF/nexus/plugin.xml"
-     */
-    private File generatedPluginMetadata;
-
-    /**
      * @parameter property="project.scm.developerConnection"
      * @readonly
      */
@@ -110,6 +103,8 @@ public class GenerateMetadataMojo
      * @parameter
      */
     private List<String> sharedDependencies;
+
+    // TODO: Consider using nexusPlugin.{name|description|siteUrl} for properties
 
     /**
      * Configures the plugin name.  Defaults to maven project name.
@@ -161,7 +156,6 @@ public class GenerateMetadataMojo
         List<Artifact> artifacts = mavenProject.getTestArtifacts();
         Set<Artifact> classpathArtifacts = new HashSet<Artifact>();
         if (artifacts != null) {
-
             Set<String> excludedArtifactIds = new HashSet<String>();
 
             // FIXME: Drop need for label, the following is already complex and hard to comprehend
@@ -222,20 +216,21 @@ public class GenerateMetadataMojo
             }
         }
 
-        request.setOutputFile(generatedPluginMetadata);
+        File outputDir = new File(mavenProject.getBuild().getOutputDirectory());
+        request.setOutputFile(new File(outputDir, "META-INF/nexus/plugin.xml"));
 
         try {
             new PluginDescriptorGenerator().generate(request);
         }
-        catch (IOException e) {
-            throw new MojoFailureException("Failed to generate plugin xml file: " + e.getMessage(), e);
+        catch (Exception e) {
+            throw new MojoFailureException("Failed to generate plugin metadata file: " + e, e);
         }
 
         try {
             ClasspathUtils.write(classpathArtifacts, mavenProject);
         }
-        catch (IOException e) {
-            throw new MojoFailureException("Failed to generate classpath properties file: " + e.getMessage(), e);
+        catch (Exception e) {
+            throw new MojoFailureException("Failed to generate plugin classpath file: " + e, e);
         }
     }
 
