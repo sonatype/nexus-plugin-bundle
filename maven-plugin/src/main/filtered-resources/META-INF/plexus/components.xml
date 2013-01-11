@@ -61,5 +61,19 @@
         </lifecycles>
       </configuration>
     </component>
+
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>nexus-plugin</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <type>nexus-plugin</type>
+        <extension>jar</extension>
+        <language>java</language>
+        <!-- <classifier>bundle</classifier> -->
+        <addedToClasspath>true</addedToClasspath>
+      </configuration>
+    </component>
+
   </components>
 </component-set>
