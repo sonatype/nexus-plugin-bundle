@@ -61,7 +61,7 @@ public class PluginDescriptorMojo
     private File generatedPluginMetadata;
 
     /**
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      * @readonly
      */
@@ -77,7 +77,7 @@ public class PluginDescriptorMojo
     /**
      * The edition of the target application. Some applications come in multiple flavors, OSS, PRO, Free, light, etc.
      *
-     * @parameter expression="OSS"
+     * @parameter default-value="OSS"
      */
     private String applicationEdition;
 
@@ -98,7 +98,7 @@ public class PluginDescriptorMojo
     private ApplicationInformation mapping = new NexusApplicationInformation();
 
     /**
-     * @parameter expression="${project.scm.developerConnection}"
+     * @parameter property="project.scm.developerConnection"
      * @readonly
      */
     private String urlScm;
@@ -106,14 +106,14 @@ public class PluginDescriptorMojo
     /**
      * The username that is used when connecting to the SCM system.
      *
-     * @parameter expression="${username}"
+     * @parameter property="username"
      */
     private String username;
 
     /**
      * The password that is used when connecting to the SCM system.
      *
-     * @parameter expression="${password}"
+     * @parameter property="password"
      */
     private String password;
 
@@ -141,21 +141,21 @@ public class PluginDescriptorMojo
     /**
      * Configures the plugin name.  Defaults to maven project name.
      *
-     * @parameter expression="${pluginName}"
+     * @parameter property="pluginName"
      */
     private String pluginName;
 
     /**
      * Configures the plugin description.  Defaults to maven project description.
      *
-     * @parameter expression="${pluginDescription}"
+     * @parameter property="pluginDescription"
      */
     private String pluginDescription;
 
     /**
      * Configures the plugin site URL.  Defaults to maven project URL.
      *
-     * @parameter expression="${pluginSiteUrl}"
+     * @parameter property="pluginSiteUrl"
      */
     private String pluginSiteUrl;
 
