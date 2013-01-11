@@ -45,7 +45,7 @@ import org.sonatype.maven.plugin.app.ApplicationInformation;
 import org.sonatype.maven.plugin.app.ClasspathUtils;
 
 /**
- * Generates a plugin's <tt>plugin.xml</tt> descriptor file based on the project's pom and class annotations.
+ * Generates a plugins {@code plugin.xml} descriptor file based on the project's pom and class annotations.
  * 
  * @goal generate-metadata
  * @phase process-classes
