@@ -60,9 +60,6 @@ public class GenerateMetadataMojo
     @Component
     private ScmManager scmManager;
 
-    @Parameter(property = "project.scm.developerConnection", readonly = true)
-    private String urlScm;
-
     /**
      * The username that is used when connecting to the SCM system.
      */
@@ -229,9 +226,24 @@ public class GenerateMetadataMojo
     // SCM
 
     protected void fillScmInfo(final PluginDescriptorGenerationRequest request) {
+        if (project.getScm() == null) {
+            getLog().warn("No SCM information defined in POM; unable to determine SCM details");
+            return;
+        }
+
+        String url = project.getScm().getDeveloperConnection();
+        if (StringUtils.isEmpty(url)) {
+            getLog().warn("No SCM developerConnection information defined in POM; unable to determine SCM details");
+            return;
+        }
+
+        getLog().debug("SCM URL: " + url);
+
         try {
-            final ScmRepository repository = getScmRepository();
-            request.setScmUrl(urlScm);
+            final ScmRepository repository = getScmRepository(url);
+            request.setScmUrl(url);
+
+            getLog().debug("Fetching SCM details");
 
             final String provider = repository.getProvider();
 
@@ -251,12 +263,8 @@ public class GenerateMetadataMojo
         }
     }
 
-    protected ScmRepository getScmRepository() throws ScmException {
-        if (StringUtils.isEmpty(urlScm)) {
-            throw new ScmException("No SCM URL found");
-        }
-
-        ScmRepository repository = scmManager.makeScmRepository(urlScm);
+    protected ScmRepository getScmRepository(final String url) throws ScmException {
+        ScmRepository repository = scmManager.makeScmRepository(url);
 
         ScmProviderRepository scmRepo = repository.getProviderRepository();
 
