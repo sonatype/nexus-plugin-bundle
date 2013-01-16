@@ -13,7 +13,6 @@
 package org.sonatype.nexus.pluginbundle.maven;
 
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.assembly.archive.AssemblyArchiver;
@@ -23,7 +22,6 @@ import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 import java.io.File;
@@ -40,11 +38,8 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
  */
 @Mojo(name="create-bundle", defaultPhase = PACKAGE)
 public class CreateBundleMojo
-    extends AbstractMojo
+    extends MojoSupport
 {
-    @Component
-    private MavenProject project;
-
     @Component
     private MavenSession session;
 
@@ -72,6 +67,11 @@ public class CreateBundleMojo
     private File assemblyDescriptor;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // skip if wrong packaging
+        if (!isNexusPluginPacakging()) {
+            return;
+        }
+
         if (bundle == null) {
             bundle = new BundleConfiguration();
         }

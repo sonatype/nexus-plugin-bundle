@@ -15,13 +15,11 @@ package org.sonatype.nexus.pluginbundle.maven;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.License;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.manager.ScmManager;
@@ -57,13 +55,10 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
  */
 @Mojo(name="generate-metadata", defaultPhase = PROCESS_CLASSES, requiresDependencyResolution = TEST)
 public class GenerateMetadataMojo
-    extends AbstractMojo
+    extends MojoSupport
 {
     @Component
     private ScmManager scmManager;
-
-    @Component
-    private MavenProject mavenProject;
 
     @Parameter(property = "project.scm.developerConnection", readonly = true)
     private String urlScm;
@@ -113,19 +108,19 @@ public class GenerateMetadataMojo
     private String pluginSiteUrl;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!mavenProject.getPackaging().equals("nexus-plugin")) {
-            getLog().info("Project is not of packaging type: nexus-plugin");
+        // skip if wrong packaging
+        if (!isNexusPluginPacakging()) {
             return;
         }
 
         PluginDescriptorGenerationRequest request = new PluginDescriptorGenerationRequest();
-        request.setGroupId(mavenProject.getGroupId());
-        request.setArtifactId(mavenProject.getArtifactId());
-        request.setVersion(mavenProject.getVersion());
+        request.setGroupId(project.getGroupId());
+        request.setArtifactId(project.getArtifactId());
+        request.setVersion(project.getVersion());
 
         // licenses
-        if (mavenProject.getLicenses() != null) {
-            for (License mavenLicenseModel : mavenProject.getLicenses()) {
+        if (project.getLicenses() != null) {
+            for (License mavenLicenseModel : project.getLicenses()) {
                 request.addLicense(mavenLicenseModel.getName(), mavenLicenseModel.getUrl());
             }
         }
@@ -134,7 +129,7 @@ public class GenerateMetadataMojo
         fillScmInfo(request);
 
         // dependencies
-        List<Artifact> artifacts = mavenProject.getTestArtifacts();
+        List<Artifact> artifacts = project.getTestArtifacts();
         Set<Artifact> classpathArtifacts = new HashSet<Artifact>();
         if (artifacts != null) {
             Set<String> excludedArtifactIds = new HashSet<String>();
@@ -197,7 +192,7 @@ public class GenerateMetadataMojo
             }
         }
 
-        File outputDir = new File(mavenProject.getBuild().getOutputDirectory());
+        File outputDir = new File(project.getBuild().getOutputDirectory());
         File file = new File(outputDir, "META-INF/nexus/plugin.xml");
         request.setOutputFile(file);
 
@@ -210,7 +205,7 @@ public class GenerateMetadataMojo
         }
 
         try {
-            ClasspathUtils.write(classpathArtifacts, mavenProject);
+            ClasspathUtils.write(classpathArtifacts, project);
         }
         catch (Exception e) {
             throw new MojoFailureException("Failed to generate plugin classpath file: " + e, e);
@@ -280,7 +275,7 @@ public class GenerateMetadataMojo
         AbstractSvnScmProvider provider = (AbstractSvnScmProvider) scmManager.getProviderByType("svn");
 
         SvnInfoScmResult result = provider.info(
-            repository.getProviderRepository(), new ScmFileSet(mavenProject.getBasedir()), null);
+            repository.getProviderRepository(), new ScmFileSet(project.getBasedir()), null);
 
         if (!result.isSuccess()) {
             throw new ScmException(result.getCommandOutput());
@@ -300,7 +295,7 @@ public class GenerateMetadataMojo
         cmd.setLogger(provider.getLogger());
 
         GitRevParseScmResult result = (GitRevParseScmResult)
-            cmd.execute(repository.getProviderRepository(), new ScmFileSet(mavenProject.getBasedir()), null);
+            cmd.execute(repository.getProviderRepository(), new ScmFileSet(project.getBasedir()), null);
 
         if (!result.isSuccess()) {
             throw new ScmException(result.getCommandOutput());
@@ -318,7 +313,7 @@ public class GenerateMetadataMojo
         cmd.setLogger(provider.getLogger());
 
         HgDebugIdScmResult result = (HgDebugIdScmResult)
-            cmd.execute(repository.getProviderRepository(), new ScmFileSet(mavenProject.getBasedir()), null);
+            cmd.execute(repository.getProviderRepository(), new ScmFileSet(project.getBasedir()), null);
 
         if (!result.isSuccess()) {
             throw new ScmException(result.getCommandOutput());

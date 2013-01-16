@@ -14,12 +14,9 @@
 package org.sonatype.nexus.pluginbundle.maven;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.project.MavenProject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +32,14 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
  */
 @Mojo(name = "check-dependencies", defaultPhase = INITIALIZE, requiresDependencyResolution = RUNTIME)
 public class CheckDependenciesMojo
-    extends AbstractMojo
+    extends MojoSupport
 {
-    @Component
-    protected MavenProject project;
-
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // skip if wrong packaging
+        if (!isNexusPluginPacakging()) {
+            return;
+        }
+
         Set<Artifact> dependencies = project.getDependencyArtifacts();
 
         // skip if no dependencies
