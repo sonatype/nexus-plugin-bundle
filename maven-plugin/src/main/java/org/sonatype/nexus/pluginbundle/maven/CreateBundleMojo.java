@@ -40,6 +40,10 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 public class CreateBundleMojo
     extends MojoSupport
 {
+    public static final String BUNDLE_TYPE = "zip";
+
+    public static final String BUNDLE_ID = "bundle";
+
     @Component
     private MavenSession session;
 
@@ -78,8 +82,8 @@ public class CreateBundleMojo
         bundle.initDefaults(project, session);
 
         Assembly assembly = createAssembly();
-        assembly.addFormat("zip");
-        assembly.setId("bundle");
+        assembly.addFormat(BUNDLE_TYPE);
+        assembly.setId(BUNDLE_ID);
         assembly.setIncludeBaseDirectory(false);
 
         // Write included plugin dependencies into the the /dependencies directory
@@ -113,14 +117,14 @@ public class CreateBundleMojo
         // Generate the bundle assembly
         File assemblyFile;
         try {
-            assemblyFile = assemblyArchiver.createArchive(assembly, bundle.getAssemblyFileName(assembly), "zip", bundle);
+            assemblyFile = assemblyArchiver.createArchive(assembly, bundle.getAssemblyFileName(assembly), BUNDLE_TYPE, bundle);
         }
         catch (Exception e) {
             throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
         }
 
         // Attach bundle assembly to the project
-        projectHelper.attachArtifact(project, "zip", assembly.getId(), assemblyFile);
+        projectHelper.attachArtifact(project, BUNDLE_TYPE, assembly.getId(), assemblyFile);
     }
 
     private Assembly createAssembly() throws MojoExecutionException {

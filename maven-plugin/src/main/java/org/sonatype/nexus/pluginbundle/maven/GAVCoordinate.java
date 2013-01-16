@@ -23,6 +23,8 @@ public class GAVCoordinate
 {
     public static final String DEFAULT_TYPE = "jar";
 
+    public static final String COLON = ":";
+
     private final String groupId;
 
     private final String artifactId;
@@ -91,21 +93,21 @@ public class GAVCoordinate
         StringBuilder buff = new StringBuilder();
 
         buff.append(String.valueOf(groupId))
-            .append(":")
+            .append(COLON)
             .append(String.valueOf(artifactId))
-            .append(":")
+            .append(COLON)
             .append(String.valueOf(version));
 
         if (!StringUtils.isEmpty(classifier)) {
-            buff.append(":").append(classifier);
+            buff.append(COLON).append(classifier);
         }
 
         if (!StringUtils.isEmpty(type) && !StringUtils.equals(DEFAULT_TYPE, type)) {
             if (StringUtils.isEmpty(classifier)) {
-                buff.append(":");
+                buff.append(COLON);
             }
 
-            buff.append(":").append(type);
+            buff.append(COLON).append(type);
         }
 
         return buff.toString();

@@ -35,12 +35,18 @@ import org.sonatype.aether.util.artifact.DefaultArtifact;
  *
  * @since 1.0
  */
-public final class ClasspathUtils
+public class ClasspathUtils
 {
     /**
      * Where detected plugin classpath state is written (under project.build.directory).
      */
     private static final String FILE_NAME = "nexus-plugin-bundle/plugin.classpath";
+
+    public static final String COLON = ":";
+
+    public static final String DASH = "-";
+
+    public static final String DOT = ".";
 
     private ClasspathUtils() {
         // empty
@@ -53,16 +59,16 @@ public final class ClasspathUtils
         StringBuilder buff = new StringBuilder();
 
         buff.append(artifact.getGroupId())
-            .append(":")
+            .append(COLON)
             .append(artifact.getArtifactId())
-            .append(':')
+            .append(COLON)
             .append(artifact.getArtifactHandler().getExtension());
 
         if (!StringUtils.isBlank(artifact.getClassifier())) {
-            buff.append(':').append(artifact.getClassifier());
+            buff.append(COLON).append(artifact.getClassifier());
         }
 
-        buff.append(":").append(artifact.getVersion());
+        buff.append(COLON).append(artifact.getVersion());
 
         return buff.toString();
     }
@@ -82,14 +88,14 @@ public final class ClasspathUtils
         StringBuilder buff = new StringBuilder();
 
         buff.append(artifact.getArtifactId())
-            .append("-")
+            .append(DASH)
             .append(artifact.getVersion());
 
         if (!StringUtils.isBlank(artifact.getClassifier())) {
-            buff.append('-').append(artifact.getClassifier());
+            buff.append(DASH).append(artifact.getClassifier());
         }
 
-        buff.append(".").append(artifact.getExtension());
+        buff.append(DOT).append(artifact.getExtension());
 
         fileItem.setDestName(buff.toString());
 
@@ -101,7 +107,7 @@ public final class ClasspathUtils
     {
         File file = new File(project.getBuild().getDirectory(), FILE_NAME);
         if (!file.exists()) {
-            throw new IOException("Cannot find: " + file + ". Did you call 'generate-metadata'?");
+            throw new IOException("Missing classpath file: " + file.getAbsolutePath());
         }
 
         Properties props = new Properties();

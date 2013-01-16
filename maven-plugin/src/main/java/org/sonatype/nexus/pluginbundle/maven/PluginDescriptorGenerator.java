@@ -34,7 +34,9 @@ import java.util.Map.Entry;
  */
 public class PluginDescriptorGenerator
 {
-    private final static String MODEL_ENCODING = "UTF-8";
+    public final static String MODEL_ENCODING = "UTF-8";
+
+    public static final String APPLICATION_ID = "nexus";
 
     public void generate(final PluginDescriptorGenerationRequest request) throws IOException {
         PluginMetadata metadata = new PluginMetadata();
@@ -42,6 +44,7 @@ public class PluginDescriptorGenerator
         request.setPluginMetadata(metadata);
 
         metadata.setModelEncoding(MODEL_ENCODING);
+        metadata.setApplicationId(APPLICATION_ID);
 
         metadata.setGroupId(request.getGroupId());
         metadata.setArtifactId(request.getArtifactId());
@@ -49,12 +52,6 @@ public class PluginDescriptorGenerator
         metadata.setName(request.getName());
         metadata.setDescription(request.getDescription());
         metadata.setPluginSite(request.getPluginSiteURL());
-
-        // TODO: Sort out if this is actually needed in NX or if its legacy
-        metadata.setApplicationId("nexus");
-        //metadata.setApplicationEdition("n/a");
-        //metadata.setApplicationMinVersion("n/a");
-        //metadata.setApplicationMaxVersion("n/a");
 
         metadata.setScmUri(request.getScmUrl());
         metadata.setScmVersion(request.getScmVersion());
