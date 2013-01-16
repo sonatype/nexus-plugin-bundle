@@ -63,6 +63,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.1</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
     </dependency>
@@ -137,5 +143,37 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>descriptor</goal>
+              <goal>helpmojo</goal>
+            </goals>
+            <configuration>
+              <!-- This appears required, or the help mojo generation will fail? -->
+              <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.1</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
 </project>

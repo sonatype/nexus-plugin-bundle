@@ -18,6 +18,9 @@ import org.apache.maven.model.License;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -44,84 +47,69 @@ import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
 import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
 import static org.apache.maven.artifact.Artifact.SCOPE_RUNTIME;
 import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_CLASSES;
+import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 /**
  * Generates a plugins {@code plugin.xml} descriptor file based on the project's pom and class annotations.
  *
- * @goal generate-metadata
- * @phase process-classes
- * @requiresDependencyResolution test
  * @since 1.0
  */
+@Mojo(name="generate-metadata", defaultPhase = PROCESS_CLASSES, requiresDependencyResolution = TEST)
 public class GenerateMetadataMojo
     extends AbstractMojo
 {
-    /**
-     * @component
-     */
+    @Component
     private ScmManager scmManager;
 
-    /**
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
+    @Component
     private MavenProject mavenProject;
 
-    /**
-     * @parameter property="project.scm.developerConnection"
-     * @readonly
-     */
+    @Parameter(property = "project.scm.developerConnection", readonly = true)
     private String urlScm;
 
     /**
      * The username that is used when connecting to the SCM system.
-     *
-     * @parameter property="username"
      */
+    @Parameter(property = "username")
     private String username;
 
     /**
      * The password that is used when connecting to the SCM system.
-     *
-     * @parameter property="password"
      */
+    @Parameter(property = "password")
     private String password;
 
     /**
-     * The list of classpath dependencies to be excluded from bundling for some reason (for example because you are shading it into plugin artifact).
-     *
-     * @parameter
+     * The list of classpath dependencies to be excluded from bundling for some reason
+     * (for example because you are shading it into plugin artifact).
      */
+    @Parameter
     private List<String> classpathDependencyExcludes;
 
     /**
-     * A list of groupId:artifactId references to non-plugin dependencies that should be shared along with main plugin JAR to dependants of this
-     * plugin.
-     *
-     * @parameter
+     * A list of groupId:artifactId references to non-plugin dependencies that should be shared
+     * along with main plugin JAR to dependants of this plugin.
      */
+    @Parameter
     private List<String> sharedDependencies;
 
     /**
      * Configures the plugin name.
-     *
-     * @parameter property="pluginName" default-value="${project.name}
      */
+    @Parameter(property = "pluginName", defaultValue = "${project.name}")
     private String pluginName;
 
     /**
      * Configures the plugin description.
-     *
-     * @parameter property="pluginDescription" default-value="${project.description}
      */
+    @Parameter(property = "pluginDescription", defaultValue = "${project.description}")
     private String pluginDescription;
 
     /**
      * Configures the plugin site URL.
-     *
-     * @parameter property="pluginSiteUrl" default-value="${project.url}
      */
+    @Parameter(property = "pluginSiteUrl", defaultValue = "${project.url}")
     private String pluginSiteUrl;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -210,8 +198,10 @@ public class GenerateMetadataMojo
         }
 
         File outputDir = new File(mavenProject.getBuild().getOutputDirectory());
-        request.setOutputFile(new File(outputDir, "META-INF/nexus/plugin.xml"));
+        File file = new File(outputDir, "META-INF/nexus/plugin.xml");
+        request.setOutputFile(file);
 
+        getLog().info("Generating metadata descriptor: " + file.getAbsolutePath());
         try {
             new PluginDescriptorGenerator().generate(request);
         }

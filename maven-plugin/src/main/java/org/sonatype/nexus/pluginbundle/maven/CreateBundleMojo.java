@@ -20,6 +20,9 @@ import org.apache.maven.plugin.assembly.archive.AssemblyArchiver;
 import org.apache.maven.plugin.assembly.io.AssemblyReader;
 import org.apache.maven.plugin.assembly.model.Assembly;
 import org.apache.maven.plugin.assembly.model.FileItem;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -28,61 +31,45 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
 
+import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
+
 /**
  * Create a plugin bundle artifact attach it to the plugins project.
  *
- * @goal create-bundle
- * @phase package
- *
  * @since 1.0
  */
+@Mojo(name="create-bundle", defaultPhase = PACKAGE)
 public class CreateBundleMojo
     extends AbstractMojo
 {
-    /**
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
+    @Component
     private MavenProject project;
 
-    /**
-     * @parameter property="session"
-     * @required
-     * @readonly
-     */
+    @Component
     private MavenSession session;
+
+    @Component
+    private AssemblyArchiver assemblyArchiver;
+
+    @Component
+    private AssemblyReader assemblyReader;
+
+    @Component
+    private MavenProjectHelper projectHelper;
 
     /**
      * Supplemental plugin assembly configuration.
-     *
-     * @parameter
      */
+    @Parameter
     private BundleConfiguration bundle;
 
     /**
      * Alternative assembly descriptor.  If not specified, default assembly descriptor will be used instead.
-     * Generally should avoid using this feature, its here for compatibility reasons.
      *
-     * @parameter
-     * @readonly
+     * Generally should avoid using this feature, its here for compatibility reasons.
      */
+    @Parameter
     private File assemblyDescriptor;
-
-    /**
-     * @component
-     */
-    private AssemblyArchiver assemblyArchiver;
-
-    /**
-     * @component
-     */
-    private AssemblyReader assemblyReader;
-
-    /**
-     * @component
-     */
-    private MavenProjectHelper projectHelper;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (bundle == null) {
@@ -100,11 +87,17 @@ public class CreateBundleMojo
             Properties artifacts = ClasspathUtils.read(project);
             String outputDirectory = project.getArtifactId() + "-" + project.getVersion() + "/dependencies";
 
-            for (Iterator it = artifacts.keySet().iterator(); it.hasNext(); ) {
-                String artifactKey = (String) it.next();
-                FileItem fileItem = ClasspathUtils.createFileItemForKey(artifactKey, artifacts);
-                fileItem.setOutputDirectory(outputDirectory);
-                assembly.addFile(fileItem);
+            if (!artifacts.isEmpty()) {
+                getLog().info("Including dependencies:");
+
+                for (Iterator it = artifacts.keySet().iterator(); it.hasNext(); ) {
+                    String artifactKey = (String) it.next();
+                    getLog().info("  + " + artifactKey);
+
+                    FileItem fileItem = ClasspathUtils.createFileItemForKey(artifactKey, artifacts);
+                    fileItem.setOutputDirectory(outputDirectory);
+                    assembly.addFile(fileItem);
+                }
             }
         }
         catch (IOException e) {
