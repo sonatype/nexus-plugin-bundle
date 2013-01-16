@@ -122,10 +122,33 @@ public class GenerateMetadataMojo
             }
         }
 
+        // dependencies
+        Set<Artifact> classpathArtifacts = fillInDependencies(request);
+
         // scm information
         fillScmInfo(request);
 
-        // dependencies
+        File outputDir = new File(project.getBuild().getOutputDirectory());
+        File file = new File(outputDir, "META-INF/nexus/plugin.xml");
+        request.setOutputFile(file);
+
+        getLog().info("Generating metadata descriptor: " + file.getAbsolutePath());
+        try {
+            new PluginDescriptorGenerator().generate(request);
+        }
+        catch (Exception e) {
+            throw new MojoFailureException("Failed to generate plugin metadata file: " + e, e);
+        }
+
+        try {
+            ClasspathUtils.write(classpathArtifacts, project);
+        }
+        catch (Exception e) {
+            throw new MojoFailureException("Failed to generate plugin classpath file: " + e, e);
+        }
+    }
+
+    private Set<Artifact> fillInDependencies(final PluginDescriptorGenerationRequest request) throws MojoFailureException {
         List<Artifact> artifacts = project.getTestArtifacts();
         Set<Artifact> classpathArtifacts = new HashSet<Artifact>();
         if (artifacts != null) {
@@ -148,7 +171,8 @@ public class GenerateMetadataMojo
                         artifact.getBaseVersion(),
                         artifact.getClassifier(),
                         artifact.getType(),
-                        false));
+                        false
+                    ));
                 }
                 else if (SCOPE_PROVIDED.equals(artifact.getScope()) || SCOPE_TEST.equals(artifact.getScope())) {
                     excludedArtifactIds.add(artifact.getId());
@@ -179,7 +203,8 @@ public class GenerateMetadataMojo
                             artifact.getBaseVersion(),
                             artifact.getClassifier(),
                             artifact.getType(),
-                            isShared));
+                            isShared
+                        ));
                         classpathArtifacts.add(artifact);
                     }
                     else {
@@ -188,25 +213,7 @@ public class GenerateMetadataMojo
                 }
             }
         }
-
-        File outputDir = new File(project.getBuild().getOutputDirectory());
-        File file = new File(outputDir, "META-INF/nexus/plugin.xml");
-        request.setOutputFile(file);
-
-        getLog().info("Generating metadata descriptor: " + file.getAbsolutePath());
-        try {
-            new PluginDescriptorGenerator().generate(request);
-        }
-        catch (Exception e) {
-            throw new MojoFailureException("Failed to generate plugin metadata file: " + e, e);
-        }
-
-        try {
-            ClasspathUtils.write(classpathArtifacts, project);
-        }
-        catch (Exception e) {
-            throw new MojoFailureException("Failed to generate plugin classpath file: " + e, e);
-        }
+        return classpathArtifacts;
     }
 
     protected boolean isExcluded(final String key) {
@@ -237,13 +244,12 @@ public class GenerateMetadataMojo
             return;
         }
 
-        getLog().debug("SCM URL: " + url);
+        getLog().debug("SCM developerConnection URL: " + url);
 
         try {
             final ScmRepository repository = getScmRepository(url);
-            request.setScmUrl(url);
 
-            getLog().debug("Fetching SCM details");
+            getLog().info("Fetching SCM details");
 
             final String provider = repository.getProvider();
 
@@ -256,6 +262,8 @@ public class GenerateMetadataMojo
             else if ("hg".equals(provider)) {
                 fillHgScmInfo(request, repository);
             }
+
+            request.setScmUrl(url);
         }
         catch (ScmException e) {
             getLog().warn("Failed to get SCM information: " + e.getMessage());
