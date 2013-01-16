@@ -33,7 +33,8 @@
                 org.apache.maven.plugins:maven-compiler-plugin:2.5.1:compile
               </compile>
               <process-classes>
-                org.sonatype.nexus:nexus-plugin-bundle-maven-plugin:${project.version}:generate-metadata
+                org.sonatype.nexus:nexus-plugin-bundle-maven-plugin:${project.version}:generate-metadata,
+                org.sonatype.plugins:sisu-maven-plugin:1.1:main-index
               </process-classes>
               <process-test-resources>
                 org.apache.maven.plugins:maven-resources-plugin:2.6:testResources
@@ -41,6 +42,9 @@
               <test-compile>
                 org.apache.maven.plugins:maven-compiler-plugin:2.5.1:testCompile
               </test-compile>
+              <process-test-classes>
+                org.sonatype.plugins:sisu-maven-plugin:1.1:test-index
+              </process-test-classes>
               <test>
                 org.apache.maven.plugins:maven-surefire-plugin:2.12.4:test
               </test>
