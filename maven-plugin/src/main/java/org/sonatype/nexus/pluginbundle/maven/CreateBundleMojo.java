@@ -96,7 +96,7 @@ public class CreateBundleMojo
 
                 for (Iterator it = artifacts.keySet().iterator(); it.hasNext(); ) {
                     String artifactKey = (String) it.next();
-                    getLog().info("  + " + artifactKey);
+                    getLog().info(" + " + artifactKey);
 
                     FileItem fileItem = ClasspathUtils.createFileItemForKey(artifactKey, artifacts);
                     fileItem.setOutputDirectory(outputDirectory);
