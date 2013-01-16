@@ -61,6 +61,15 @@ public class CreateBundleMojo
     private BundleConfiguration bundle;
 
     /**
+     * Alternative assembly descriptor.  If not specified, default assembly descriptor will be used instead.
+     * Generally should avoid using this feature, its here for compatibility reasons.
+     *
+     * @parameter
+     * @readonly
+     */
+    private File assemblyDescriptor;
+
+    /**
      * @component
      */
     private AssemblyArchiver assemblyArchiver;
@@ -81,7 +90,7 @@ public class CreateBundleMojo
         }
         bundle.initDefaults(project, session);
 
-        Assembly assembly = new Assembly();
+        Assembly assembly = createAssembly();
         assembly.addFormat("zip");
         assembly.setId("bundle");
         assembly.setIncludeBaseDirectory(false);
@@ -119,5 +128,25 @@ public class CreateBundleMojo
 
         // Attach bundle assembly to the project
         projectHelper.attachArtifact(project, "zip", assembly.getId(), assemblyFile);
+    }
+
+    private Assembly createAssembly() throws MojoExecutionException {
+        Assembly assembly;
+
+        if (assemblyDescriptor != null) {
+            getLog().debug("Using custom assembly descriptor: " + assemblyDescriptor.getAbsolutePath());
+
+            try {
+                assembly = assemblyReader.getAssemblyFromDescriptorFile(assemblyDescriptor, bundle);
+            }
+            catch (Exception e) {
+                throw new MojoExecutionException("Could not read assembly descriptor: " + assemblyDescriptor.getAbsolutePath(), e);
+            }
+        }
+        else {
+            assembly = new Assembly();
+        }
+
+        return assembly;
     }
 }
