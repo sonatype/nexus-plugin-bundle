@@ -15,7 +15,7 @@ package org.sonatype.nexus.pluginbundle.maven.scm;
 import org.apache.maven.scm.ScmResult;
 
 /**
- * ???
+ * Result data from {@link HgDebugIdCommand}.
  *
  * @since 1.0
  */
