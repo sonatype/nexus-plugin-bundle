@@ -49,7 +49,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_CLASSE
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
 /**
- * Generates a plugins {@code plugin.xml} descriptor file based on the project's pom and class annotations.
+ * Generates a plugins {@code plugin.xml} descriptor file based on the project's POM and class annotations.
  *
  * @since 1.0
  */
