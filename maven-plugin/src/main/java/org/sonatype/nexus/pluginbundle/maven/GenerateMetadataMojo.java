@@ -103,26 +103,24 @@ public class GenerateMetadataMojo
      */
     private List<String> sharedDependencies;
 
-    // TODO: Consider using nexusPlugin.{name|description|siteUrl} for properties
-
     /**
-     * Configures the plugin name.  Defaults to maven project name.
+     * Configures the plugin name.
      *
-     * @parameter property="pluginName"
+     * @parameter property="pluginName" default-value="${project.name}
      */
     private String pluginName;
 
     /**
-     * Configures the plugin description.  Defaults to maven project description.
+     * Configures the plugin description.
      *
-     * @parameter property="pluginDescription"
+     * @parameter property="pluginDescription" default-value="${project.description}
      */
     private String pluginDescription;
 
     /**
-     * Configures the plugin site URL.  Defaults to maven project URL.
+     * Configures the plugin site URL.
      *
-     * @parameter property="pluginSiteUrl"
+     * @parameter property="pluginSiteUrl" default-value="${project.url}
      */
     private String pluginSiteUrl;
 
@@ -136,10 +134,6 @@ public class GenerateMetadataMojo
         request.setGroupId(mavenProject.getGroupId());
         request.setArtifactId(mavenProject.getArtifactId());
         request.setVersion(mavenProject.getVersion());
-
-        request.setName(pluginName != null ? pluginName : mavenProject.getName());
-        request.setDescription(pluginDescription != null ? pluginDescription : mavenProject.getDescription());
-        request.setPluginSiteURL(pluginSiteUrl != null ? pluginSiteUrl : mavenProject.getUrl());
 
         // licenses
         if (mavenProject.getLicenses() != null) {
