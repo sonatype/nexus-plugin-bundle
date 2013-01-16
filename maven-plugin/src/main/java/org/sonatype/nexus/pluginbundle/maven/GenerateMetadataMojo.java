@@ -137,7 +137,7 @@ public class GenerateMetadataMojo
             // FIXME: Drop need for label, the following is already complex and hard to comprehend
             artifactLoop:
             for (Artifact artifact : artifacts) {
-                if (artifact.getType().equals("nexus-plugin")) {
+                if (artifact.getType().equals(NEXUS_PLUGIN)) {
                     if (!SCOPE_PROVIDED.equals(artifact.getScope())) {
                         throw new MojoFailureException("Nexus plugin dependency must use 'provided' scope: " + artifact.getDependencyConflictId());
                     }

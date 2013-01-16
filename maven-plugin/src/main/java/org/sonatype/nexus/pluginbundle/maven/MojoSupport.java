@@ -32,7 +32,7 @@ public abstract class MojoSupport
 
     protected boolean isNexusPluginPacakging() {
         if (!project.getPackaging().equals(NEXUS_PLUGIN)) {
-            getLog().warn("Project is not of packaging type: nexus-plugin");
+            getLog().warn("Project is not of packaging type: " + NEXUS_PLUGIN);
             return false;
         }
         return true;

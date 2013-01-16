@@ -51,7 +51,7 @@ public class CheckDependenciesMojo
 
         // find any nexus-plugin deps which are not scope=provided
         for (Artifact dep : dependencies) {
-            if ("nexus-plugin".equals(dep.getArtifactHandler().getPackaging())) {
+            if (NEXUS_PLUGIN.equals(dep.getArtifactHandler().getPackaging())) {
                 if (!Artifact.SCOPE_PROVIDED.equals(dep.getScope())) {
                     failures.add(dep.getId());
                 }
