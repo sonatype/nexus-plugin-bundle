@@ -89,7 +89,7 @@ public class CreateBundleMojo
         // Write included plugin dependencies into the the /dependencies directory
         try {
             Properties artifacts = ClasspathUtils.read(project);
-            String outputDirectory = project.getArtifactId() + "-" + project.getVersion() + "/dependencies";
+            String outputDirectory = String.format("%s-%s/dependencies", project.getArtifactId(), project.getVersion());
 
             if (!artifacts.isEmpty()) {
                 getLog().info("Including dependencies:");
