@@ -63,7 +63,7 @@ public class CreateBundleMojo
     private BundleConfiguration bundle;
 
     /**
-     * Alternative assembly descriptor.  If not specified, default assembly descriptor will be used instead.
+     * Optional alternative assembly descriptor.
      *
      * Generally should avoid using this feature, its here for compatibility reasons.
      */
