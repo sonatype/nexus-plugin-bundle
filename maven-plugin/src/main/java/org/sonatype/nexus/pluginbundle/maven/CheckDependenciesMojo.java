@@ -58,6 +58,13 @@ public class CheckDependenciesMojo
             }
         }
 
+        // TODO: Consider bringing back more checks of deps which are provided by NX core, but not marked as scope=provided
+        // TODO: There is a big list of these, and its hard to heep them in sync with the actual product...
+        // TODO: Though perhaps we could always use the nexus-plugin-api dependency's tree as the basis for this calculation
+
+        // TODO: May also want to consider warning, and stripping out these bits when building the bundle
+        // TODO: ... so that plugins do not have to have huge list of exclusions (and known about all the exclusions)
+
         if (failures.isEmpty()) {
             getLog().info("No dependency problems detected");
         }
