@@ -115,6 +115,10 @@ public class GenerateMetadataMojo
         request.setArtifactId(project.getArtifactId());
         request.setVersion(project.getVersion());
 
+        request.setName(pluginName);
+        request.setDescription(pluginDescription);
+        request.setPluginSiteURL(pluginSiteUrl);
+
         // licenses
         if (project.getLicenses() != null) {
             for (License mavenLicenseModel : project.getLicenses()) {
@@ -237,6 +241,10 @@ public class GenerateMetadataMojo
             getLog().warn("No SCM information defined in POM; unable to determine SCM details");
             return;
         }
+
+        // FIXME: The SCM URL here (for git at least) in a multi-module build isn't correct
+        // FIXME: ... returning things like: scm:git:git@github.com:sonatype/oss-parents.git/nexus-plugin-parent/nexus-plugins/nexus-plugin-console-plugin
+        // FIXME: ... for sub-modules: https://github.com/sonatype/nexus/tree/master/plugins/nexus-plugin-console-plugin
 
         String url = project.getScm().getDeveloperConnection();
         if (StringUtils.isEmpty(url)) {
