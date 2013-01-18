@@ -1,0 +1,5 @@
+org.sonatype.plugins.model
+org.sonatype.plugins.model.io.xpp3
+org.sonatype.plugins.model.v1_0_0
+org.sonatype.plugins.model.v1_0_0.io.xpp3
+
