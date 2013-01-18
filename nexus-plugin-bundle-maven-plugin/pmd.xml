@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-01-18T10:05:42.805">
+<pmd version="4.3" timestamp="2013-01-18T11:18:10.186">
 <file name="/Users/jason/ws/sonatype/nexus-plugin-bundle/maven-plugin/src/main/java/org/sonatype/nexus/pluginbundle/maven/CheckDependenciesMojo.java">
 <violation beginline="55" endline="57" begincolumn="17" endcolumn="17" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.sonatype.nexus.pluginbundle.maven" class="CheckDependenciesMojo" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined

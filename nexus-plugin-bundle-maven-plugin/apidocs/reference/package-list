@@ -1,2 +1,4 @@
+default package
 org.sonatype.nexus.pluginbundle.maven
+org.sonatype.nexus.pluginbundle.maven.scm
 

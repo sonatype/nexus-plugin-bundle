@@ -1,24 +1,1519 @@
 <api>
 <package name="org.sonatype.nexus.pluginbundle.maven"
 >
-<class name="DummyTest"
- extends="org.sonatype.sisu.litmus.testsupport.TestSupport"
+<class name="BundleConfiguration"
+ extends="java.lang.Object"
  abstract="false"
  static="false"
  final="false"
  deprecated="not deprecated"
  visibility="public"
 >
-<constructor name="DummyTest"
- type="org.sonatype.nexus.pluginbundle.maven.DummyTest"
+<constructor name="BundleConfiguration"
+ type="org.sonatype.nexus.pluginbundle.maven.BundleConfiguration"
  static="false"
  final="false"
  deprecated="not deprecated"
  visibility="public"
 >
 </constructor>
-<method name="fixme"
+<method name="addFilter"
  return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="filter" type="java.lang.String">
+</parameter>
+</method>
+<method name="getArchiveBaseDirectory"
+ return="java.io.File"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getArchiverConfig"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getAssemblyFileName"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="assembly" type="org.apache.maven.plugin.assembly.model.Assembly">
+</parameter>
+</method>
+<method name="getBasedir"
+ return="java.io.File"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getClassifier"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getDescriptor"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getDescriptorId"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getDescriptorReferences"
+ return="java.lang.String[]"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getDescriptorSourceDirectory"
+ return="java.io.File"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getDescriptors"
+ return="java.lang.String[]"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getFilters"
+ return="java.util.List"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getFinalName"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getJarArchiveConfiguration"
+ return="org.apache.maven.archiver.MavenArchiveConfiguration"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getLocalRepository"
+ return="org.apache.maven.artifact.repository.ArtifactRepository"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getMavenFileFilter"
+ return="org.apache.maven.shared.filtering.MavenFileFilter"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getMavenSession"
+ return="org.apache.maven.execution.MavenSession"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getOutputDirectory"
+ return="java.io.File"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getProject"
+ return="org.apache.maven.project.MavenProject"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getReactorProjects"
+ return="java.util.List"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getRemoteRepositories"
+ return="java.util.List"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getSiteDirectory"
+ return="java.io.File"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getTarLongFileMode"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getTemporaryRootDirectory"
+ return="java.io.File"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getWorkingDirectory"
+ return="java.io.File"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="initDefaults"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="project" type="org.apache.maven.project.MavenProject">
+</parameter>
+<parameter name="session" type="org.apache.maven.execution.MavenSession">
+</parameter>
+</method>
+<method name="isAssemblyIdAppended"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="isDryRun"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="isIgnoreDirFormatExtensions"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="isIgnoreMissingDescriptor"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="isSiteIncluded"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="setArchive"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="archiveConfiguration" type="org.apache.maven.archiver.MavenArchiveConfiguration">
+</parameter>
+</method>
+<method name="setFilters"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="filters" type="java.util.List&lt;java.lang.String&gt;">
+</parameter>
+</method>
+<method name="setFinalName"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="finalName" type="java.lang.String">
+</parameter>
+</method>
+<method name="setTarLongFileMode"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="mode" type="java.lang.String">
+</parameter>
+</method>
+</class>
+<class name="CheckDependenciesMojo"
+ extends="org.sonatype.nexus.pluginbundle.maven.MojoSupport"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="CheckDependenciesMojo"
+ type="org.sonatype.nexus.pluginbundle.maven.CheckDependenciesMojo"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="execute"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<exception name="MojoExecutionException" type="org.apache.maven.plugin.MojoExecutionException">
+</exception>
+<exception name="MojoFailureException" type="org.apache.maven.plugin.MojoFailureException">
+</exception>
+</method>
+</class>
+<class name="ClasspathUtils"
+ extends="java.lang.Object"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<method name="createFileItemForKey"
+ return="org.apache.maven.plugin.assembly.model.FileItem"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="key" type="java.lang.String">
+</parameter>
+<parameter name="artifacts" type="java.util.Properties">
+</parameter>
+</method>
+<method name="formatArtifactKey"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="artifact" type="org.apache.maven.artifact.Artifact">
+</parameter>
+</method>
+<method name="read"
+ return="java.util.Properties"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="project" type="org.apache.maven.project.MavenProject">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<method name="write"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="classpathArtifacts" type="java.util.Set&lt;org.apache.maven.artifact.Artifact&gt;">
+</parameter>
+<parameter name="project" type="org.apache.maven.project.MavenProject">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<field name="COLON"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;:&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="DASH"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;-&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="DOT"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;.&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+</class>
+<class name="CreateBundleMojo"
+ extends="org.sonatype.nexus.pluginbundle.maven.MojoSupport"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="CreateBundleMojo"
+ type="org.sonatype.nexus.pluginbundle.maven.CreateBundleMojo"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="execute"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<exception name="MojoExecutionException" type="org.apache.maven.plugin.MojoExecutionException">
+</exception>
+<exception name="MojoFailureException" type="org.apache.maven.plugin.MojoFailureException">
+</exception>
+</method>
+<field name="BUNDLE_ID"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;bundle&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="BUNDLE_TYPE"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;zip&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+</class>
+<class name="GAVCoordinate"
+ extends="java.lang.Object"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="GAVCoordinate"
+ type="org.sonatype.nexus.pluginbundle.maven.GAVCoordinate"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="groupId" type="java.lang.String">
+</parameter>
+<parameter name="artifactId" type="java.lang.String">
+</parameter>
+<parameter name="version" type="java.lang.String">
+</parameter>
+<parameter name="classifier" type="java.lang.String">
+</parameter>
+<parameter name="type" type="java.lang.String">
+</parameter>
+<parameter name="shared" type="boolean">
+</parameter>
+</constructor>
+<method name="getArtifactId"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getClassifier"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getGroupId"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getType"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getVersion"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="isShared"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<field name="COLON"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;:&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="DEFAULT_TYPE"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;jar&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+</class>
+<class name="GenerateMetadataMojo"
+ extends="org.sonatype.nexus.pluginbundle.maven.MojoSupport"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="GenerateMetadataMojo"
+ type="org.sonatype.nexus.pluginbundle.maven.GenerateMetadataMojo"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="execute"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<exception name="MojoExecutionException" type="org.apache.maven.plugin.MojoExecutionException">
+</exception>
+<exception name="MojoFailureException" type="org.apache.maven.plugin.MojoFailureException">
+</exception>
+</method>
+<method name="fillGitScmInfo"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="request" type="org.sonatype.nexus.pluginbundle.maven.PluginDescriptorGenerationRequest">
+</parameter>
+<parameter name="repository" type="org.apache.maven.scm.repository.ScmRepository">
+</parameter>
+<exception name="ScmException" type="org.apache.maven.scm.ScmException">
+</exception>
+</method>
+<method name="fillHgScmInfo"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="request" type="org.sonatype.nexus.pluginbundle.maven.PluginDescriptorGenerationRequest">
+</parameter>
+<parameter name="repository" type="org.apache.maven.scm.repository.ScmRepository">
+</parameter>
+<exception name="ScmException" type="org.apache.maven.scm.ScmException">
+</exception>
+</method>
+<method name="fillScmInfo"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="request" type="org.sonatype.nexus.pluginbundle.maven.PluginDescriptorGenerationRequest">
+</parameter>
+</method>
+<method name="fillSvnScmInfo"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="request" type="org.sonatype.nexus.pluginbundle.maven.PluginDescriptorGenerationRequest">
+</parameter>
+<parameter name="repository" type="org.apache.maven.scm.repository.ScmRepository">
+</parameter>
+<exception name="ScmException" type="org.apache.maven.scm.ScmException">
+</exception>
+</method>
+<method name="getScmRepository"
+ return="org.apache.maven.scm.repository.ScmRepository"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="url" type="java.lang.String">
+</parameter>
+<exception name="ScmException" type="org.apache.maven.scm.ScmException">
+</exception>
+</method>
+<method name="isExcluded"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="key" type="java.lang.String">
+</parameter>
+</method>
+</class>
+<class name="MojoSupport"
+ extends="org.apache.maven.plugin.AbstractMojo"
+ abstract="true"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="MojoSupport"
+ type="org.sonatype.nexus.pluginbundle.maven.MojoSupport"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="isNexusPluginPacakging"
+ return="boolean"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+</method>
+<field name="NEXUS_PLUGIN"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;nexus-plugin&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="project"
+ type="org.apache.maven.project.MavenProject"
+ transient="false"
+ volatile="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+</field>
+</class>
+<class name="PluginDescriptorGenerationRequest"
+ extends="java.lang.Object"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="PluginDescriptorGenerationRequest"
+ type="org.sonatype.nexus.pluginbundle.maven.PluginDescriptorGenerationRequest"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="addClasspathDependency"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="coordinate" type="org.sonatype.nexus.pluginbundle.maven.GAVCoordinate">
+</parameter>
+</method>
+<method name="addLicense"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="type" type="java.lang.String">
+</parameter>
+<parameter name="url" type="java.lang.String">
+</parameter>
+</method>
+<method name="addPluginDependency"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="coordinate" type="org.sonatype.nexus.pluginbundle.maven.GAVCoordinate">
+</parameter>
+</method>
+<method name="getArtifactId"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getClasspathDependencies"
+ return="java.util.Set&lt;org.sonatype.nexus.pluginbundle.maven.GAVCoordinate&gt;"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getDescription"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getGroupId"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getLicenses"
+ return="java.util.Map&lt;java.lang.String, java.lang.String&gt;"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getName"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getOutputFile"
+ return="java.io.File"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getPluginDependencies"
+ return="java.util.Set&lt;org.sonatype.nexus.pluginbundle.maven.GAVCoordinate&gt;"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getPluginMetadata"
+ return="org.sonatype.plugins.model.PluginMetadata"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getPluginSiteURL"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getScmTimestamp"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getScmUrl"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getScmVersion"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getSourceEncoding"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getVersion"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="setArtifactId"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="artifactId" type="java.lang.String">
+</parameter>
+</method>
+<method name="setDescription"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="description" type="java.lang.String">
+</parameter>
+</method>
+<method name="setGroupId"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="groupId" type="java.lang.String">
+</parameter>
+</method>
+<method name="setName"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="name" type="java.lang.String">
+</parameter>
+</method>
+<method name="setOutputFile"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="outputFile" type="java.io.File">
+</parameter>
+</method>
+<method name="setPluginMetadata"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="pluginMetadata" type="org.sonatype.plugins.model.PluginMetadata">
+</parameter>
+</method>
+<method name="setPluginSiteURL"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="pluginSiteURL" type="java.lang.String">
+</parameter>
+</method>
+<method name="setScmTimestamp"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="scmTimestamp" type="java.lang.String">
+</parameter>
+</method>
+<method name="setScmUrl"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="scmUrl" type="java.lang.String">
+</parameter>
+</method>
+<method name="setScmVersion"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="scmVersion" type="java.lang.String">
+</parameter>
+</method>
+<method name="setSourceEncoding"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="sourceEncoding" type="java.lang.String">
+</parameter>
+</method>
+<method name="setVersion"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="version" type="java.lang.String">
+</parameter>
+</method>
+</class>
+<class name="PluginDescriptorGenerator"
+ extends="java.lang.Object"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="PluginDescriptorGenerator"
+ type="org.sonatype.nexus.pluginbundle.maven.PluginDescriptorGenerator"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="generate"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="request" type="org.sonatype.nexus.pluginbundle.maven.PluginDescriptorGenerationRequest">
+</parameter>
+<exception name="IOException" type="java.io.IOException">
+</exception>
+</method>
+<field name="APPLICATION_ID"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;nexus&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+<field name="MODEL_ENCODING"
+ type="java.lang.String"
+ transient="false"
+ volatile="false"
+ value="&quot;UTF-8&quot;"
+ static="true"
+ final="true"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</field>
+</class>
+</package>
+<package name="org.sonatype.nexus.pluginbundle.maven.scm"
+>
+<class name="GitRevParseCommand"
+ extends="org.apache.maven.scm.command.AbstractCommand"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="GitRevParseCommand"
+ type="org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseCommand"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="createCommandLine"
+ return="org.codehaus.plexus.util.cli.Commandline"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="true"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="repository" type="org.apache.maven.scm.provider.git.repository.GitScmProviderRepository">
+</parameter>
+<parameter name="workingDirectory" type="java.io.File">
+</parameter>
+<parameter name="revPtr" type="java.lang.String">
+</parameter>
+</method>
+<method name="executeCommand"
+ return="org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseScmResult"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="repository" type="org.apache.maven.scm.provider.ScmProviderRepository">
+</parameter>
+<parameter name="fileSet" type="org.apache.maven.scm.ScmFileSet">
+</parameter>
+<parameter name="parameters" type="org.apache.maven.scm.CommandParameters">
+</parameter>
+<exception name="ScmException" type="org.apache.maven.scm.ScmException">
+</exception>
+</method>
+</class>
+<class name="GitRevParseScmResult"
+ extends="org.apache.maven.scm.ScmResult"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="GitRevParseScmResult"
+ type="org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseScmResult"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="commandLine" type="java.lang.String">
+</parameter>
+<parameter name="providerMessage" type="java.lang.String">
+</parameter>
+<parameter name="commandOutput" type="java.lang.String">
+</parameter>
+<parameter name="success" type="boolean">
+</parameter>
+<parameter name="changeSetHash" type="java.lang.String">
+</parameter>
+<parameter name="changeSetDate" type="java.lang.String">
+</parameter>
+</constructor>
+<method name="getChangeSetDate"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getChangeSetHash"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+</class>
+<class name="HgDebugIdCommand"
+ extends="org.apache.maven.scm.command.AbstractCommand"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="HgDebugIdCommand"
+ type="org.sonatype.nexus.pluginbundle.maven.scm.HgDebugIdCommand"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="executeCommand"
+ return="org.sonatype.nexus.pluginbundle.maven.scm.HgDebugIdScmResult"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="protected"
+>
+<parameter name="repository" type="org.apache.maven.scm.provider.ScmProviderRepository">
+</parameter>
+<parameter name="fileSet" type="org.apache.maven.scm.ScmFileSet">
+</parameter>
+<parameter name="parameters" type="org.apache.maven.scm.CommandParameters">
+</parameter>
+<exception name="ScmException" type="org.apache.maven.scm.ScmException">
+</exception>
+</method>
+</class>
+<class name="HgDebugIdScmResult"
+ extends="org.apache.maven.scm.ScmResult"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="HgDebugIdScmResult"
+ type="org.sonatype.nexus.pluginbundle.maven.scm.HgDebugIdScmResult"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<parameter name="commandLine" type="java.lang.String">
+</parameter>
+<parameter name="providerMessage" type="java.lang.String">
+</parameter>
+<parameter name="commandOutput" type="java.lang.String">
+</parameter>
+<parameter name="success" type="boolean">
+</parameter>
+<parameter name="changeSetHash" type="java.lang.String">
+</parameter>
+<parameter name="changeSetDate" type="java.lang.String">
+</parameter>
+</constructor>
+<method name="getChangeSetDate"
+ return="java.lang.String"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+<method name="getChangeSetHash"
+ return="java.lang.String"
  abstract="false"
  native="false"
  synchronized="false"
