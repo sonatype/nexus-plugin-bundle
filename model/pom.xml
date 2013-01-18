@@ -25,6 +25,7 @@
   </parent>
 
   <artifactId>nexus-plugin-bundle-model</artifactId>
+  <name>${project.artifactId}</name>
 
   <dependencies>
     <dependency>
@@ -49,7 +50,7 @@
               <packageWithVersion>false</packageWithVersion>
               <useJava5>true</useJava5>
               <!--
-              NOTE: Retaining versions from app-lifecycle for legacy compatibility.
+              Retaining versions from app-lifecycle for legacy compatibility.
               -->
               <packagedVersions>
                 <packagedVersion>1.0.0</packagedVersion>

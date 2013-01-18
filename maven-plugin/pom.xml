@@ -25,6 +25,7 @@
   </parent>
 
   <artifactId>nexus-plugin-bundle-maven-plugin</artifactId>
+  <name>${project.artifactId}</name>
   <packaging>maven-plugin</packaging>
 
   <properties>
@@ -149,7 +150,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.1</version>
         <executions>
           <execution>
             <goals>
@@ -157,6 +157,7 @@
               <goal>helpmojo</goal>
             </goals>
             <configuration>
+              <goalPrefix>nxpluginbundle</goalPrefix>
               <!-- This appears required, or the help mojo generation will fail? -->
               <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
             </configuration>
