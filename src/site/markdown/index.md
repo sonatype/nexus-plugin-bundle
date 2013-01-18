@@ -15,3 +15,5 @@
 # Nexus Plugin Bundle
 
 Provides support for building Nexus plugin bundles with Apache Maven (ie. __nexus-plugin__ packaging).
+
+See the [Maven Plugin](nexus-plugin-bundle-maven-plugin/index.html) documentation for more details.
