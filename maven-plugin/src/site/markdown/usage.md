@@ -14,7 +14,7 @@
 -->
 # Usage
 
-Goals of this plugin are not intended to be executed directly.  They are enabled via the __nexus-plugin__ packaging lifecycle.
+Goals of this plugin are not intended to be executed directly, they are enabled via the __nexus-plugin__ packaging lifecycle.
 
 ## References
 
