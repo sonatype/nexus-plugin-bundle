@@ -40,8 +40,8 @@ public class GAVCoordinate
     public GAVCoordinate(final String groupId,
                          final String artifactId,
                          final String version,
-                         final String classifier,
-                         final String type,
+                         final /*@Nullable*/ String classifier,
+                         final /*@Nullable*/ String type,
                          final boolean shared)
     {
         this.groupId = groupId;

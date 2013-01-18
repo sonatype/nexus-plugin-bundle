@@ -15,14 +15,18 @@ package org.sonatype.nexus.pluginbundle.maven;
 import org.junit.Test;
 import org.sonatype.sisu.litmus.testsupport.TestSupport;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 /**
- * FIXME: Replace with actual tests.
+ * Tests for {@link GAVCoordinate}.
  */
-public class DummyTest
+public class GAVCoordinateTest
     extends TestSupport
 {
     @Test
-    public void fixme() {
-        // Add some real tests dude!
+    public void GAV_toString() {
+        GAVCoordinate coord = new GAVCoordinate("foo", "bar", "1.0", null, null, false);
+        assertThat(coord.toString(), is("foo:bar:1.0"));
     }
 }
