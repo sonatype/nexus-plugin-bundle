@@ -1,0 +1,34 @@
+<lifecycleMappingMetadata>
+  <pluginExecutions>
+    <pluginExecution>
+      <pluginExecutionFilter>
+        <goals>
+          <goal>generate-metadata</goal>
+        </goals>
+      </pluginExecutionFilter>
+      <action>
+        <execute>
+          <!-- 
+             @TODO enable incremental build
+
+             Metadata needs to be regenerated whenever effective pom changes.
+             This is not possible using plexus-build-api but should be doable with
+             the upcoming build-context API. 
+           -->
+          <runOnIncremental>false</runOnIncremental>
+        </execute>
+      </action>
+    </pluginExecution>
+    <pluginExecution>
+      <pluginExecutionFilter>
+        <goals>
+          <goal>create-bundle</goal>
+          <goal>check-dependencies</goal>
+        </goals>
+      </pluginExecutionFilter>
+      <action>
+        <ignore/>
+      </action>
+    </pluginExecution>
+  </pluginExecutions>
+</lifecycleMappingMetadata>

@@ -16,7 +16,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +28,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Utility methods to read and write a mapping document for non-plugin dependency artifacts used in an application plugin.
@@ -124,7 +124,7 @@ public class ClasspathUtils
         return props;
     }
 
-    public static void write(final Set<Artifact> classpathArtifacts, final MavenProject project) throws IOException {
+    public static void write(final BuildContext buildContext, final Set<Artifact> classpathArtifacts, final MavenProject project) throws IOException {
         Properties props = new Properties();
 
         for (Artifact artifact : classpathArtifacts) {
@@ -138,7 +138,7 @@ public class ClasspathUtils
 
         OutputStream output = null;
         try {
-            output = new BufferedOutputStream(new FileOutputStream(file));
+            output = new BufferedOutputStream(buildContext.newFileOutputStream(file));
             props.store(output, null);
         }
         finally {
