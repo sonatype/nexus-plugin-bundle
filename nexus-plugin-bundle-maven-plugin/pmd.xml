@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.3" timestamp="2013-01-18T10:05:42.805">
+<file name="/Users/jason/ws/sonatype/nexus-plugin-bundle/maven-plugin/src/main/java/org/sonatype/nexus/pluginbundle/maven/CheckDependenciesMojo.java">
+<violation beginline="55" endline="57" begincolumn="17" endcolumn="17" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.sonatype.nexus.pluginbundle.maven" class="CheckDependenciesMojo" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="/Users/jason/ws/sonatype/nexus-plugin-bundle/maven-plugin/src/main/java/org/sonatype/nexus/pluginbundle/maven/GenerateMetadataMojo.java">
+<violation beginline="14" endline="349" begincolumn="1" endcolumn="1" rule="TooManyStaticImports" ruleset="Import Statement Rules" package="org.sonatype.nexus.pluginbundle.maven" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#TooManyStaticImports" priority="3">
+Too many static imports may lead to messy code
+</violation>
+</file>
+<file name="/Users/jason/ws/sonatype/nexus-plugin-bundle/maven-plugin/src/main/java/org/sonatype/nexus/pluginbundle/maven/PluginDescriptorGenerationRequest.java">
+<violation beginline="21" endline="21" begincolumn="1" endcolumn="59" rule="ImportFromSamePackage" ruleset="Import Statement Rules" package="org.sonatype.nexus.pluginbundle.maven" externalInfoUrl="http://pmd.sourceforge.net/rules/imports.html#ImportFromSamePackage" priority="3">
+No need to import a type that lives in the same package
+</violation>
+</file>
+</pmd>
