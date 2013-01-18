@@ -1,0 +1,33 @@
+<api>
+<package name="org.sonatype.nexus.pluginbundle.maven"
+>
+<class name="DummyTest"
+ extends="org.sonatype.sisu.litmus.testsupport.TestSupport"
+ abstract="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+<constructor name="DummyTest"
+ type="org.sonatype.nexus.pluginbundle.maven.DummyTest"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</constructor>
+<method name="fixme"
+ return="void"
+ abstract="false"
+ native="false"
+ synchronized="false"
+ static="false"
+ final="false"
+ deprecated="not deprecated"
+ visibility="public"
+>
+</method>
+</class>
+</package>
+</api>
