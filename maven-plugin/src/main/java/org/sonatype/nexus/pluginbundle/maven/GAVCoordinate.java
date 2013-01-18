@@ -14,6 +14,8 @@ package org.sonatype.nexus.pluginbundle.maven;
 
 import org.codehaus.plexus.util.StringUtils;
 
+import javax.annotation.Nullable;
+
 /**
  * GAV configuration.
  *
@@ -40,8 +42,8 @@ public class GAVCoordinate
     public GAVCoordinate(final String groupId,
                          final String artifactId,
                          final String version,
-                         final /*@Nullable*/ String classifier,
-                         final /*@Nullable*/ String type,
+                         final @Nullable String classifier,
+                         final @Nullable String type,
                          final boolean shared)
     {
         this.groupId = groupId;
