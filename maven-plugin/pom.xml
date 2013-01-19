@@ -166,6 +166,10 @@
           Works around bug in maven-plugin packaging lifecycle: http://jira.codehaus.org/browse/MNG-5346
           -->
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          <!--
+          For some reason, m-p-p detects the prefix for this plugin should be 'nexusbundle' not sure why.
+          -->
+          <goalPrefix>nexus-plugin-bundle</goalPrefix>
         </configuration>
         <executions>
           <execution>
