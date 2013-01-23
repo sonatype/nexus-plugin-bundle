@@ -13,6 +13,7 @@
 package org.sonatype.nexus.pluginbundle.maven;
 
 import org.codehaus.plexus.util.IOUtil;
+import org.sonatype.plexus.build.incremental.BuildContext;
 import org.sonatype.plugins.model.ClasspathDependency;
 import org.sonatype.plugins.model.PluginDependency;
 import org.sonatype.plugins.model.PluginLicense;
@@ -21,7 +22,6 @@ import org.sonatype.plugins.model.io.xpp3.PluginModelXpp3Writer;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -37,6 +37,12 @@ public class PluginDescriptorGenerator
     public final static String MODEL_ENCODING = "UTF-8";
 
     public static final String APPLICATION_ID = "nexus";
+
+    private final BuildContext buildContext;
+
+    public PluginDescriptorGenerator(final BuildContext buildContext) {
+        this.buildContext = buildContext;
+    }
 
     public void generate(final PluginDescriptorGenerationRequest request) throws IOException {
         PluginMetadata metadata = new PluginMetadata();
@@ -98,7 +104,7 @@ public class PluginDescriptorGenerator
         outputFile.getParentFile().mkdirs();
         Writer output = null;
         try {
-            output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), MODEL_ENCODING));
+            output = new BufferedWriter(new OutputStreamWriter(buildContext.newFileOutputStream(outputFile), MODEL_ENCODING));
             PluginModelXpp3Writer writer = new PluginModelXpp3Writer();
             writer.write(output, metadata);
         }

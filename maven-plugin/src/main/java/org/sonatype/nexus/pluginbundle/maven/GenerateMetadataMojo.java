@@ -35,6 +35,7 @@ import org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseCommand;
 import org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseScmResult;
 import org.sonatype.nexus.pluginbundle.maven.scm.HgDebugIdCommand;
 import org.sonatype.nexus.pluginbundle.maven.scm.HgDebugIdScmResult;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import java.io.File;
 import java.util.HashSet;
@@ -104,6 +105,12 @@ public class GenerateMetadataMojo
     @Parameter(property = "pluginSiteUrl", defaultValue = "${project.url}")
     private String pluginSiteUrl;
 
+    /**
+     * m2e workspace integration hook
+     */
+    @Component
+    private BuildContext buildContext;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
         // skip if wrong packaging
         if (!isNexusPluginPacakging()) {
@@ -138,14 +145,14 @@ public class GenerateMetadataMojo
 
         getLog().info("Generating metadata descriptor: " + file.getAbsolutePath());
         try {
-            new PluginDescriptorGenerator().generate(request);
+            new PluginDescriptorGenerator(buildContext).generate(request);
         }
         catch (Exception e) {
             throw new MojoFailureException("Failed to generate plugin metadata file: " + e, e);
         }
 
         try {
-            ClasspathUtils.write(classpathArtifacts, project);
+            ClasspathUtils.write(buildContext, classpathArtifacts, project);
         }
         catch (Exception e) {
             throw new MojoFailureException("Failed to generate plugin classpath file: " + e, e);
