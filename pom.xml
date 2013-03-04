@@ -27,7 +27,7 @@
   <artifactId>nexus-plugin-bundle</artifactId>
   <packaging>pom</packaging>
 
-  <version>1.0</version>
+  <version>1.0.1-SNAPSHOT</version>
 
   <url>http://sonatype.github.com/nexus-plugin-bundle</url>
 
@@ -70,13 +70,13 @@
       <dependency>
         <groupId>org.sonatype.nexus</groupId>
         <artifactId>nexus-plugin-bundle-model</artifactId>
-        <version>1.0</version>
+        <version>1.0.1-SNAPSHOT</version>
       </dependency>
 
       <dependency>
         <groupId>org.sonatype.nexus</groupId>
         <artifactId>nexus-plugin-bundle-maven-plugin</artifactId>
-        <version>1.0</version>
+        <version>1.0.1-SNAPSHOT</version>
       </dependency>
 
     </dependencies>
