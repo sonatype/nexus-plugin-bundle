@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>nexus-plugin-bundle-maven-plugin</artifactId>
-  <name>${project.artifactId}</name>
+  <name>${project.groupId}:${project.artifactId}</name>
   <packaging>maven-plugin</packaging>
 
   <properties>
