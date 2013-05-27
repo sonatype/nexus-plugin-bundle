@@ -94,6 +94,9 @@ public class CreateBundleMojo
             if (!artifacts.isEmpty()) {
                 getLog().info("Including dependencies:");
 
+                // TODO: Add support to exclude dependencies here with g:a[:v] syntax
+                // TODO: ... so we can remove need of <exclusions> which are only to keep deps out of here (which confuses some tooling)
+
                 for (Iterator it = artifacts.keySet().iterator(); it.hasNext(); ) {
                     String artifactKey = (String) it.next();
                     getLog().info(" + " + artifactKey);
