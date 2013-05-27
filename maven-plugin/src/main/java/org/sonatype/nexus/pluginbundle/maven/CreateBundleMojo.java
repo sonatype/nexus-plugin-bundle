@@ -26,7 +26,11 @@ import org.apache.maven.project.MavenProjectHelper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
@@ -89,19 +93,18 @@ public class CreateBundleMojo
         // Write included plugin dependencies into the the /dependencies directory
         try {
             Properties artifacts = ClasspathUtils.read(project);
+
+            // build list of keys and sort for better display
+            List<String> artifactKeys = new ArrayList<String>(mapOf(artifacts).keySet());
+            Collections.sort(artifactKeys);
+
             String outputDirectory = String.format("%s-%s/dependencies", project.getArtifactId(), project.getVersion());
 
             if (!artifacts.isEmpty()) {
-                getLog().info("Including dependencies:");
-
-                // TODO: Add support to exclude dependencies here with g:a[:v] syntax
-                // TODO: ... so we can remove need of <exclusions> which are only to keep deps out of here (which confuses some tooling)
-
-                for (Iterator it = artifacts.keySet().iterator(); it.hasNext(); ) {
-                    String artifactKey = (String) it.next();
-                    getLog().info(" + " + artifactKey);
-
-                    FileItem fileItem = ClasspathUtils.createFileItemForKey(artifactKey, artifacts);
+                getLog().info("Including " + artifacts.size() + " dependencies:");
+                for (String key : artifactKeys) {
+                    getLog().info(" + " + key);
+                    FileItem fileItem = ClasspathUtils.createFileItemForKey(key, artifacts);
                     fileItem.setOutputDirectory(outputDirectory);
                     assembly.addFile(fileItem);
                 }
@@ -128,6 +131,14 @@ public class CreateBundleMojo
 
         // Attach bundle assembly to the project
         projectHelper.attachArtifact(project, BUNDLE_TYPE, assembly.getId(), assemblyFile);
+    }
+
+    private Map<String,String> mapOf(final Properties props) {
+        Map<String,String> map = new HashMap<String,String>(props.size());
+        for (Object key : props.keySet()) {
+            map.put(key.toString(), props.get(key).toString());
+        }
+        return map;
     }
 
     private Assembly createAssembly() throws MojoExecutionException {
