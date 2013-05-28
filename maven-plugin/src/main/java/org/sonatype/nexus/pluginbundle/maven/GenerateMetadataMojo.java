@@ -38,6 +38,8 @@ import org.sonatype.nexus.pluginbundle.maven.scm.HgDebugIdScmResult;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +56,7 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
  *
  * @since 1.0
  */
-@Mojo(name="generate-metadata", defaultPhase = PROCESS_CLASSES, requiresDependencyResolution = TEST)
+@Mojo(name = "generate-metadata", defaultPhase = PROCESS_CLASSES, requiresDependencyResolution = TEST)
 public class GenerateMetadataMojo
     extends MojoSupport
 {
@@ -164,16 +166,18 @@ public class GenerateMetadataMojo
         Set<Artifact> classpathArtifacts = new HashSet<Artifact>();
         if (artifacts != null) {
             Set<String> excludedArtifactIds = new HashSet<String>();
+            Set<String> userExcludesIds = new HashSet<String>();
+            Set<String> pluginIds = new HashSet<String>();
 
             // FIXME: Drop need for label, the following is already complex and hard to comprehend
             artifactLoop:
             for (Artifact artifact : artifacts) {
+                final String artifactKey = ClasspathUtils.formatArtifactKey(artifact);
+
                 if (artifact.getType().equals(NEXUS_PLUGIN)) {
                     if (!SCOPE_PROVIDED.equals(artifact.getScope())) {
                         throw new MojoFailureException("Nexus plugin dependency must use 'provided' scope: " + artifact.getDependencyConflictId());
                     }
-
-                    excludedArtifactIds.add(artifact.getId());
 
                     // plugin inter-dependencies will use baseVersion, and let PluginManager resolve them runtime
                     request.addPluginDependency(new GAVCoordinate(
@@ -184,6 +188,9 @@ public class GenerateMetadataMojo
                         artifact.getType(),
                         false
                     ));
+
+                    excludedArtifactIds.add(artifactKey);
+                    pluginIds.add(artifactKey);
                 }
                 else if (SCOPE_PROVIDED.equals(artifact.getScope()) || SCOPE_TEST.equals(artifact.getScope())) {
                     excludedArtifactIds.add(artifact.getId());
@@ -199,8 +206,6 @@ public class GenerateMetadataMojo
                             }
                         }
                     }
-
-                    final String artifactKey = ClasspathUtils.formatArtifactKey(artifact);
 
                     if (!isExcluded(artifactKey)) {
                         boolean isShared =
@@ -219,7 +224,36 @@ public class GenerateMetadataMojo
                         classpathArtifacts.add(artifact);
                     }
                     else {
-                        getLog().info("Classpath dependency excluded from plugin bundle by user configuration: " + artifactKey);
+                        userExcludesIds.add(artifactKey);
+                    }
+                }
+            }
+
+            if (!pluginIds.isEmpty()) {
+                List<String> ids = new ArrayList<String>(pluginIds);
+                Collections.sort(ids);
+                getLog().info("Including " + pluginIds.size() + " plugin dependencies:");
+                for (String id : ids) {
+                    getLog().info(" + " + id);
+                }
+            }
+
+            if (!userExcludesIds.isEmpty()) {
+                List<String> ids = new ArrayList<String>(userExcludesIds);
+                Collections.sort(ids);
+                getLog().info("User excluded " + userExcludesIds.size() + " dependencies:");
+                for (String id : ids) {
+                    getLog().info(" - " + id);
+                }
+            }
+
+            if (getLog().isDebugEnabled()) {
+                if (!excludedArtifactIds.isEmpty()) {
+                    List<String> ids = new ArrayList<String>(excludedArtifactIds);
+                    Collections.sort(ids);
+                    getLog().debug("All excluded " + userExcludesIds.size() + " dependencies:");
+                    for (String id : ids) {
+                        getLog().debug(" - " + id);
                     }
                 }
             }
