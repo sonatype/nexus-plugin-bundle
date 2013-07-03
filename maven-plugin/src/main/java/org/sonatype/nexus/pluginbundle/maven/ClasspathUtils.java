@@ -21,13 +21,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
@@ -73,12 +75,28 @@ public class ClasspathUtils
         return buff.toString();
     }
 
-    private static org.sonatype.aether.artifact.Artifact formatArtifactFromKey(final String key, final Properties artifacts) {
-        return new DefaultArtifact(key).setFile(new File(artifacts.getProperty(key)));
+    private static Artifact formatArtifactFromKey(final String key, final Properties artifacts) {
+        Pattern p = Pattern.compile( "([^: ]+):([^: ]+)(:([^: ]*)(:([^: ]+))?)?:([^: ]+)" );
+        Matcher m = p.matcher( key );
+        if ( !m.matches() )
+        {
+            throw new IllegalArgumentException( "Bad artifact coordinates " + key
+                    + ", expected format is <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>" );
+        }
+        String groupId = m.group( 1 );
+        String artifactId = m.group( 2 );
+        String extension = m.group( 4 );
+        extension = (extension == null || extension.length() < 1 ) ? "jar" : extension ;
+        String classifier = m.group( 6 );
+        classifier = (classifier == null || classifier.length() < 1 ) ? "" : classifier ;
+        String version = m.group( 7 );
+        final DefaultArtifact result = new DefaultArtifact(groupId, artifactId, version, null, extension, classifier, null);
+        result.setFile(new File(artifacts.getProperty(key)));
+        return result;
     }
 
     public static FileItem createFileItemForKey(final String key, final Properties artifacts) {
-        org.sonatype.aether.artifact.Artifact artifact = ClasspathUtils.formatArtifactFromKey(key, artifacts);
+        Artifact artifact = ClasspathUtils.formatArtifactFromKey(key, artifacts);
 
         String sourcePath = artifact.getFile().getAbsolutePath();
 
@@ -95,7 +113,7 @@ public class ClasspathUtils
             buff.append(DASH).append(artifact.getClassifier());
         }
 
-        buff.append(DOT).append(artifact.getExtension());
+        buff.append(DOT).append(artifact.getType());
 
         fileItem.setDestName(buff.toString());
 
