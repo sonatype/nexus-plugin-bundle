@@ -57,7 +57,8 @@ public class ClasspathUtils
     /**
      * {@code <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>}
      */
-    public static String formatArtifactKey(final Artifact artifact) {
+    public static String formatArtifactKey( final Artifact artifact ) 
+    {
         StringBuilder buff = new StringBuilder();
 
         buff.append(artifact.getGroupId())
@@ -75,7 +76,8 @@ public class ClasspathUtils
         return buff.toString();
     }
 
-    private static Artifact formatArtifactFromKey(final String key, final Properties artifacts) {
+    private static Artifact formatArtifactFromKey( final String key, final Properties artifacts ) 
+    {
         Pattern p = Pattern.compile( "([^: ]+):([^: ]+)(:([^: ]*)(:([^: ]+))?)?:([^: ]+)" );
         Matcher m = p.matcher( key );
         if ( !m.matches() )
@@ -95,7 +97,8 @@ public class ClasspathUtils
         return result;
     }
 
-    public static FileItem createFileItemForKey(final String key, final Properties artifacts) {
+    public static FileItem createFileItemForKey( final String key, final Properties artifacts ) 
+    {
         Artifact artifact = ClasspathUtils.formatArtifactFromKey(key, artifacts);
 
         String sourcePath = artifact.getFile().getAbsolutePath();
@@ -120,7 +123,7 @@ public class ClasspathUtils
         return fileItem;
     }
 
-    public static Properties read(final MavenProject project)
+    public static Properties read( final MavenProject project )
         throws IOException
     {
         File file = new File(project.getBuild().getDirectory(), FILE_NAME);
@@ -142,7 +145,10 @@ public class ClasspathUtils
         return props;
     }
 
-    public static void write(final BuildContext buildContext, final Set<Artifact> classpathArtifacts, final MavenProject project) throws IOException {
+    public static void write( final BuildContext buildContext, final Set<Artifact> classpathArtifacts,
+                              final MavenProject project )
+        throws IOException
+    {
         Properties props = new Properties();
 
         for (Artifact artifact : classpathArtifacts) {
