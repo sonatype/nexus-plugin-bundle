@@ -10,6 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
+
 package org.sonatype.nexus.pluginbundle.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -24,16 +25,16 @@ import org.apache.maven.project.MavenProject;
 public abstract class MojoSupport
     extends AbstractMojo
 {
-    public static final String NEXUS_PLUGIN = "nexus-plugin";
+  public static final String NEXUS_PLUGIN = "nexus-plugin";
 
-    @Component
-    protected MavenProject project;
+  @Component
+  protected MavenProject project;
 
-    protected boolean isNexusPluginPacakging() {
-        if (!project.getPackaging().equals(NEXUS_PLUGIN)) {
-            getLog().warn("Project is not of packaging type: " + NEXUS_PLUGIN);
-            return false;
-        }
-        return true;
+  protected boolean isNexusPluginPacakging() {
+    if (!project.getPackaging().equals(NEXUS_PLUGIN)) {
+      getLog().warn("Project is not of packaging type: " + NEXUS_PLUGIN);
+      return false;
     }
+    return true;
+  }
 }

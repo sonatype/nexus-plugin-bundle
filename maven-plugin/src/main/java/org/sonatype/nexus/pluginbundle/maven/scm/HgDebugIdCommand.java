@@ -10,6 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
+
 package org.sonatype.nexus.pluginbundle.maven.scm;
 
 import org.apache.maven.scm.CommandParameters;
@@ -33,66 +34,66 @@ import org.codehaus.plexus.util.StringUtils;
 public class HgDebugIdCommand
     extends AbstractCommand
 {
-    @Override
-    protected HgDebugIdScmResult executeCommand(final ScmProviderRepository repository,
-                                                final ScmFileSet fileSet,
-                                                final CommandParameters parameters)
-        throws ScmException
-    {
-        HgOutputConsumer consumer;
-        ScmResult result;
+  @Override
+  protected HgDebugIdScmResult executeCommand(final ScmProviderRepository repository,
+                                              final ScmFileSet fileSet,
+                                              final CommandParameters parameters)
+      throws ScmException
+  {
+    HgOutputConsumer consumer;
+    ScmResult result;
 
-        consumer = new HgOutputConsumer(getLogger());
-        result = HgUtils.execute(consumer, getLogger(), fileSet.getBasedir(), new String[]{"id", "-i", "--debug"});
-        checkResult(result);
+    consumer = new HgOutputConsumer(getLogger());
+    result = HgUtils.execute(consumer, getLogger(), fileSet.getBasedir(), new String[]{"id", "-i", "--debug"});
+    checkResult(result);
 
-        String changeSetHash = consumer.getOutput();
+    String changeSetHash = consumer.getOutput();
 
-        // trim off the possible "+"
-        if (changeSetHash.endsWith("+")) {
-            changeSetHash = changeSetHash.substring(0, changeSetHash.length() - 1);
-        }
-
-        consumer = new HgOutputConsumer(getLogger());
-        result = HgUtils.execute(consumer, getLogger(), fileSet.getBasedir(), new String[]{
-            "log",
-            "-r",
-            String.valueOf(changeSetHash),
-            "--template",
-            "\"{date|isodate}\""
-        });
-        checkResult(result);
-
-        return new HgDebugIdScmResult(null, null, null, true, changeSetHash, consumer.getOutput());
+    // trim off the possible "+"
+    if (changeSetHash.endsWith("+")) {
+      changeSetHash = changeSetHash.substring(0, changeSetHash.length() - 1);
     }
 
-    private void checkResult(final ScmResult result)
-        throws ScmException
-    {
-        if (!result.isSuccess()) {
-            getLogger().debug("Provider message:");
-            getLogger().debug(result.getProviderMessage() == null ? "" : result.getProviderMessage());
-            getLogger().debug("Command output:");
-            getLogger().debug(result.getCommandOutput() == null ? "" : result.getCommandOutput());
-            throw new ScmException("Command failed: " + StringUtils.defaultString(result.getProviderMessage()));
-        }
+    consumer = new HgOutputConsumer(getLogger());
+    result = HgUtils.execute(consumer, getLogger(), fileSet.getBasedir(), new String[]{
+        "log",
+        "-r",
+        String.valueOf(changeSetHash),
+        "--template",
+        "\"{date|isodate}\""
+    });
+    checkResult(result);
+
+    return new HgDebugIdScmResult(null, null, null, true, changeSetHash, consumer.getOutput());
+  }
+
+  private void checkResult(final ScmResult result)
+      throws ScmException
+  {
+    if (!result.isSuccess()) {
+      getLogger().debug("Provider message:");
+      getLogger().debug(result.getProviderMessage() == null ? "" : result.getProviderMessage());
+      getLogger().debug("Command output:");
+      getLogger().debug(result.getCommandOutput() == null ? "" : result.getCommandOutput());
+      throw new ScmException("Command failed: " + StringUtils.defaultString(result.getProviderMessage()));
+    }
+  }
+
+  private static class HgOutputConsumer
+      extends HgConsumer
+  {
+    private String output;
+
+    private HgOutputConsumer(final ScmLogger logger) {
+      super(logger);
     }
 
-    private static class HgOutputConsumer
-        extends HgConsumer
-    {
-        private String output;
-
-        private HgOutputConsumer(final ScmLogger logger) {
-            super(logger);
-        }
-
-        public void doConsume(final ScmFileStatus status, final String line) {
-            output = line;
-        }
-
-        private String getOutput() {
-            return output;
-        }
+    public void doConsume(final ScmFileStatus status, final String line) {
+      output = line;
     }
+
+    private String getOutput() {
+      return output;
+    }
+  }
 }

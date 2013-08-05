@@ -15,7 +15,7 @@
 -->
 
 <model xmlns="http://modello.codehaus.org/MODELLO/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd">
+       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd">
 
   <id>plugin</id>
   <name>PluginModel</name>
@@ -106,7 +106,9 @@
         <field>
           <name>applicationEdition</name>
           <version>1.0.0+</version>
-          <description>Plugin target application's edition.  Some applications come in different editions, 'open-source', 'light', 'enterprise', etc.</description>
+          <description>Plugin target application's edition. Some applications come in different editions, 'open-source',
+            'light', 'enterprise', etc.
+          </description>
           <type>String</type>
           <required>true</required>
         </field>
@@ -269,7 +271,8 @@
           <name>hasComponents</name>
           <version>1.0.0/1.1.0</version>
           <description>
-            Set True if the classpath dependency needs gleaning for components. Deprecated in favor of "shared" flag. If this flag is set, "shared" is assumed and is processed as such.
+            Set True if the classpath dependency needs gleaning for components. Deprecated in favor of "shared" flag. If
+            this flag is set, "shared" is assumed and is processed as such.
           </description>
           <type>boolean</type>
           <required>true</required>
@@ -279,7 +282,8 @@
           <name>shared</name>
           <version>1.1.0+</version>
           <description>
-            Set True if the classpath dependency is shared (ie. by referencing this plugin as plugin dependency you will get access to this classpath dependency too).
+            Set True if the classpath dependency is shared (ie. by referencing this plugin as plugin dependency you will
+            get access to this classpath dependency too).
           </description>
           <type>boolean</type>
           <required>true</required>

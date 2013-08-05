@@ -10,6 +10,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
+
 package org.sonatype.nexus.pluginbundle.maven.scm;
 
 import org.apache.maven.scm.ScmResult;
@@ -22,28 +23,28 @@ import org.apache.maven.scm.ScmResult;
 public class GitRevParseScmResult
     extends ScmResult
 {
-    private final String changeSetHash;
+  private final String changeSetHash;
 
-    private final String changeSetDate;
+  private final String changeSetDate;
 
-    public GitRevParseScmResult(final String commandLine,
-                                final String providerMessage,
-                                final String commandOutput,
-                                final boolean success,
-                                final String changeSetHash,
-                                final String changeSetDate)
-    {
-        super(commandLine, providerMessage, commandOutput, success);
+  public GitRevParseScmResult(final String commandLine,
+                              final String providerMessage,
+                              final String commandOutput,
+                              final boolean success,
+                              final String changeSetHash,
+                              final String changeSetDate)
+  {
+    super(commandLine, providerMessage, commandOutput, success);
 
-        this.changeSetHash = changeSetHash;
-        this.changeSetDate = changeSetDate;
-    }
+    this.changeSetHash = changeSetHash;
+    this.changeSetDate = changeSetDate;
+  }
 
-    public String getChangeSetHash() {
-        return changeSetHash;
-    }
+  public String getChangeSetHash() {
+    return changeSetHash;
+  }
 
-    public String getChangeSetDate() {
-        return changeSetDate;
-    }
+  public String getChangeSetDate() {
+    return changeSetDate;
+  }
 }

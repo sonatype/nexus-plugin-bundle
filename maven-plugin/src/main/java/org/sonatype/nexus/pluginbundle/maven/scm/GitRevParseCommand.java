@@ -10,7 +10,10 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
+
 package org.sonatype.nexus.pluginbundle.maven.scm;
+
+import java.io.File;
 
 import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
@@ -24,8 +27,6 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
-import java.io.File;
-
 /**
  * A simple command to present checksum of current repo.
  *
@@ -35,47 +36,47 @@ public class GitRevParseCommand
     extends AbstractCommand
     implements GitCommand
 {
-    @Override
-    protected GitRevParseScmResult executeCommand(final ScmProviderRepository repository,
-                                                  final ScmFileSet fileSet,
-                                                  final CommandParameters parameters)
-        throws ScmException
-    {
-        Commandline cl = createCommandLine((GitScmProviderRepository) repository, fileSet.getBasedir(), "HEAD");
-        CommandLineUtils.StringStreamConsumer stdout = new CommandLineUtils.StringStreamConsumer();
-        CommandLineUtils.StringStreamConsumer stderr = new CommandLineUtils.StringStreamConsumer();
+  @Override
+  protected GitRevParseScmResult executeCommand(final ScmProviderRepository repository,
+                                                final ScmFileSet fileSet,
+                                                final CommandParameters parameters)
+      throws ScmException
+  {
+    Commandline cl = createCommandLine((GitScmProviderRepository) repository, fileSet.getBasedir(), "HEAD");
+    CommandLineUtils.StringStreamConsumer stdout = new CommandLineUtils.StringStreamConsumer();
+    CommandLineUtils.StringStreamConsumer stderr = new CommandLineUtils.StringStreamConsumer();
 
-        int exitCode = GitCommandLineUtils.execute(cl, stdout, stderr, getLogger());
+    int exitCode = GitCommandLineUtils.execute(cl, stdout, stderr, getLogger());
 
-        if (exitCode != 0) {
-            return new GitRevParseScmResult(
-                cl.toString(),
-                "The git-rev-parse command failed.",
-                stderr.getOutput(),
-                false,
-                null,
-                null
-            );
-        }
-
-        return new GitRevParseScmResult(
-            cl.toString(),
-            "The git-rev-parse command succeeded.",
-            stderr.getOutput(),
-            true,
-            StringUtils.chomp(stdout.getOutput()),
-            null
-        );
+    if (exitCode != 0) {
+      return new GitRevParseScmResult(
+          cl.toString(),
+          "The git-rev-parse command failed.",
+          stderr.getOutput(),
+          false,
+          null,
+          null
+      );
     }
 
-    public static Commandline createCommandLine(final GitScmProviderRepository repository,
-                                                final File workingDirectory,
-                                                final String revPtr)
-    {
-        Commandline cl = GitCommandLineUtils.getBaseGitCommandLine(workingDirectory, "rev-parse");
+    return new GitRevParseScmResult(
+        cl.toString(),
+        "The git-rev-parse command succeeded.",
+        stderr.getOutput(),
+        true,
+        StringUtils.chomp(stdout.getOutput()),
+        null
+    );
+  }
 
-        cl.createArg().setValue(revPtr);
+  public static Commandline createCommandLine(final GitScmProviderRepository repository,
+                                              final File workingDirectory,
+                                              final String revPtr)
+  {
+    Commandline cl = GitCommandLineUtils.getBaseGitCommandLine(workingDirectory, "rev-parse");
 
-        return cl;
-    }
+    cl.createArg().setValue(revPtr);
+
+    return cl;
+  }
 }

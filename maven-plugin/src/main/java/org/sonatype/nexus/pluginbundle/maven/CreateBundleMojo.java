@@ -10,7 +10,17 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
+
 package org.sonatype.nexus.pluginbundle.maven;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -24,15 +34,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProjectHelper;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 
 /**
@@ -40,124 +41,126 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
  *
  * @since 1.0
  */
-@Mojo(name="create-bundle", defaultPhase = PACKAGE)
+@Mojo(name = "create-bundle", defaultPhase = PACKAGE)
 public class CreateBundleMojo
     extends MojoSupport
 {
-    public static final String BUNDLE_TYPE = "zip";
+  public static final String BUNDLE_TYPE = "zip";
 
-    public static final String BUNDLE_ID = "bundle";
+  public static final String BUNDLE_ID = "bundle";
 
-    @Component
-    private MavenSession session;
+  @Component
+  private MavenSession session;
 
-    @Component
-    private AssemblyArchiver assemblyArchiver;
+  @Component
+  private AssemblyArchiver assemblyArchiver;
 
-    @Component
-    private AssemblyReader assemblyReader;
+  @Component
+  private AssemblyReader assemblyReader;
 
-    @Component
-    private MavenProjectHelper projectHelper;
+  @Component
+  private MavenProjectHelper projectHelper;
 
-    /**
-     * Supplemental plugin assembly configuration.
-     */
-    @Parameter
-    private BundleConfiguration bundle;
+  /**
+   * Supplemental plugin assembly configuration.
+   */
+  @Parameter
+  private BundleConfiguration bundle;
 
-    /**
-     * Optional alternative assembly descriptor.
-     *
-     * Generally should avoid using this feature, its here for compatibility reasons.
-     */
-    @Parameter
-    private File assemblyDescriptor;
+  /**
+   * Optional alternative assembly descriptor.
+   *
+   * Generally should avoid using this feature, its here for compatibility reasons.
+   */
+  @Parameter
+  private File assemblyDescriptor;
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        // skip if wrong packaging
-        if (!isNexusPluginPacakging()) {
-            return;
-        }
-
-        if (bundle == null) {
-            bundle = new BundleConfiguration();
-        }
-        bundle.initDefaults(project, session);
-
-        Assembly assembly = createAssembly();
-        assembly.addFormat(BUNDLE_TYPE);
-        assembly.setId(BUNDLE_ID);
-        assembly.setIncludeBaseDirectory(false);
-
-        // Write included plugin dependencies into the the /dependencies directory
-        try {
-            Properties artifacts = ClasspathUtils.read(project);
-
-            // build list of keys and sort for better display
-            List<String> artifactKeys = new ArrayList<String>(mapOf(artifacts).keySet());
-            Collections.sort(artifactKeys);
-
-            String outputDirectory = String.format("%s-%s/dependencies", project.getArtifactId(), project.getVersion());
-
-            if (!artifacts.isEmpty()) {
-                getLog().info("Including " + artifacts.size() + " dependencies:");
-                for (String key : artifactKeys) {
-                    getLog().info(" + " + key);
-                    FileItem fileItem = ClasspathUtils.createFileItemForKey(key, artifacts);
-                    fileItem.setOutputDirectory(outputDirectory);
-                    assembly.addFile(fileItem);
-                }
-            }
-        }
-        catch (IOException e) {
-            throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
-        }
-
-        // Add the main plugin artifact
-        FileItem fileItem = new FileItem();
-        fileItem.setSource(project.getArtifact().getFile().getPath());
-        fileItem.setOutputDirectory(project.getArtifactId() + "-" + project.getVersion());
-        assembly.addFile(fileItem);
-
-        // Generate the bundle assembly
-        File assemblyFile;
-        try {
-            assemblyFile = assemblyArchiver.createArchive(assembly, bundle.getAssemblyFileName(assembly), BUNDLE_TYPE, bundle);
-        }
-        catch (Exception e) {
-            throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
-        }
-
-        // Attach bundle assembly to the project
-        projectHelper.attachArtifact(project, BUNDLE_TYPE, assembly.getId(), assemblyFile);
+  public void execute() throws MojoExecutionException, MojoFailureException {
+    // skip if wrong packaging
+    if (!isNexusPluginPacakging()) {
+      return;
     }
 
-    private Map<String,String> mapOf(final Properties props) {
-        Map<String,String> map = new HashMap<String,String>(props.size());
-        for (Object key : props.keySet()) {
-            map.put(key.toString(), props.get(key).toString());
+    if (bundle == null) {
+      bundle = new BundleConfiguration();
+    }
+    bundle.initDefaults(project, session);
+
+    Assembly assembly = createAssembly();
+    assembly.addFormat(BUNDLE_TYPE);
+    assembly.setId(BUNDLE_ID);
+    assembly.setIncludeBaseDirectory(false);
+
+    // Write included plugin dependencies into the the /dependencies directory
+    try {
+      Properties artifacts = ClasspathUtils.read(project);
+
+      // build list of keys and sort for better display
+      List<String> artifactKeys = new ArrayList<String>(mapOf(artifacts).keySet());
+      Collections.sort(artifactKeys);
+
+      String outputDirectory = String.format("%s-%s/dependencies", project.getArtifactId(), project.getVersion());
+
+      if (!artifacts.isEmpty()) {
+        getLog().info("Including " + artifacts.size() + " dependencies:");
+        for (String key : artifactKeys) {
+          getLog().info(" + " + key);
+          FileItem fileItem = ClasspathUtils.createFileItemForKey(key, artifacts);
+          fileItem.setOutputDirectory(outputDirectory);
+          assembly.addFile(fileItem);
         }
-        return map;
+      }
+    }
+    catch (IOException e) {
+      throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
     }
 
-    private Assembly createAssembly() throws MojoExecutionException {
-        Assembly assembly;
+    // Add the main plugin artifact
+    FileItem fileItem = new FileItem();
+    fileItem.setSource(project.getArtifact().getFile().getPath());
+    fileItem.setOutputDirectory(project.getArtifactId() + "-" + project.getVersion());
+    assembly.addFile(fileItem);
 
-        if (assemblyDescriptor != null) {
-            getLog().debug("Using custom assembly descriptor: " + assemblyDescriptor.getAbsolutePath());
-
-            try {
-                assembly = assemblyReader.getAssemblyFromDescriptorFile(assemblyDescriptor, bundle);
-            }
-            catch (Exception e) {
-                throw new MojoExecutionException("Could not read assembly descriptor: " + assemblyDescriptor.getAbsolutePath(), e);
-            }
-        }
-        else {
-            assembly = new Assembly();
-        }
-
-        return assembly;
+    // Generate the bundle assembly
+    File assemblyFile;
+    try {
+      assemblyFile = assemblyArchiver
+          .createArchive(assembly, bundle.getAssemblyFileName(assembly), BUNDLE_TYPE, bundle);
     }
+    catch (Exception e) {
+      throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
+    }
+
+    // Attach bundle assembly to the project
+    projectHelper.attachArtifact(project, BUNDLE_TYPE, assembly.getId(), assemblyFile);
+  }
+
+  private Map<String, String> mapOf(final Properties props) {
+    Map<String, String> map = new HashMap<String, String>(props.size());
+    for (Object key : props.keySet()) {
+      map.put(key.toString(), props.get(key).toString());
+    }
+    return map;
+  }
+
+  private Assembly createAssembly() throws MojoExecutionException {
+    Assembly assembly;
+
+    if (assemblyDescriptor != null) {
+      getLog().debug("Using custom assembly descriptor: " + assemblyDescriptor.getAbsolutePath());
+
+      try {
+        assembly = assemblyReader.getAssemblyFromDescriptorFile(assemblyDescriptor, bundle);
+      }
+      catch (Exception e) {
+        throw new MojoExecutionException("Could not read assembly descriptor: " + assemblyDescriptor.getAbsolutePath(),
+            e);
+      }
+    }
+    else {
+      assembly = new Assembly();
+    }
+
+    return assembly;
+  }
 }

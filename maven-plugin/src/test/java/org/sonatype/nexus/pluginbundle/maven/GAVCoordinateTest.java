@@ -10,10 +10,12 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
+
 package org.sonatype.nexus.pluginbundle.maven;
 
-import org.junit.Test;
 import org.sonatype.sisu.litmus.testsupport.TestSupport;
+
+import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -24,9 +26,9 @@ import static org.junit.Assert.assertThat;
 public class GAVCoordinateTest
     extends TestSupport
 {
-    @Test
-    public void GAV_toString() {
-        GAVCoordinate coord = new GAVCoordinate("foo", "bar", "1.0", null, null, false);
-        assertThat(coord.toString(), is("foo:bar:1.0"));
-    }
+  @Test
+  public void GAV_toString() {
+    GAVCoordinate coord = new GAVCoordinate("foo", "bar", "1.0", null, null, false);
+    assertThat(coord.toString(), is("foo:bar:1.0"));
+  }
 }
