@@ -30,6 +30,15 @@ import org.apache.maven.scm.provider.svn.command.info.SvnInfoItem;
 import org.apache.maven.scm.provider.svn.command.info.SvnInfoScmResult;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
+import org.sonatype.aether.RepositorySystem;
+import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.collection.CollectRequest;
+import org.sonatype.aether.collection.CollectResult;
+import org.sonatype.aether.collection.DependencyCollectionException;
+import org.sonatype.aether.graph.Dependency;
+import org.sonatype.aether.graph.DependencyNode;
+import org.sonatype.aether.graph.DependencyVisitor;
+import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseCommand;
 import org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseScmResult;
 import org.sonatype.nexus.pluginbundle.maven.scm.HgDebugIdCommand;
@@ -112,6 +121,20 @@ public class GenerateMetadataMojo
     @Component
     private BuildContext buildContext;
 
+    @Component
+    private RepositorySystem repositorySession;
+
+    @Parameter(property = "repositorySystemSession")
+    private RepositorySystemSession repositorySystemSession;
+
+    /**
+     * Artifact ID of nexus-plugin-api which is used to calculate banned dependencies for auto-exclusion.
+     */
+    @Parameter
+    private String bannedRootArtifactId;
+
+    private List<String> bannedIds;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
         // skip if wrong packaging
         if (!isNexusPluginPacakging()) {
@@ -135,6 +158,14 @@ public class GenerateMetadataMojo
         }
 
         // dependencies
+        if (bannedRootArtifactId != null) {
+            try {
+                bannedIds = collectBannedDependencies();
+            }
+            catch (DependencyCollectionException e) {
+                throw new MojoFailureException(e.getMessage(), e);
+            }
+        }
         Set<Artifact> classpathArtifacts = fillInDependencies(request);
 
         // scm information
@@ -164,14 +195,18 @@ public class GenerateMetadataMojo
         List<Artifact> artifacts = project.getTestArtifacts();
         Set<Artifact> classpathArtifacts = new HashSet<Artifact>();
         if (artifacts != null) {
+
             Set<String> excludedArtifactIds = new HashSet<String>();
             Set<String> userExcludesIds = new HashSet<String>();
+            Set<String> autoBannedIds = new HashSet<String>();
             Set<String> pluginIds = new HashSet<String>();
 
             // FIXME: Drop need for label, the following is already complex and hard to comprehend
             artifactLoop:
             for (Artifact artifact : artifacts) {
                 final String artifactKey = ClasspathUtils.formatArtifactKey(artifact);
+                boolean excluded = isExcluded(artifactKey);
+                boolean banned = isBanned(artifactKey);
 
                 if (artifact.getType().equals(NEXUS_PLUGIN)) {
                     if (!SCOPE_PROVIDED.equals(artifact.getScope())) {
@@ -206,9 +241,14 @@ public class GenerateMetadataMojo
                         }
                     }
 
-                    if (!isExcluded(artifactKey)) {
-                        boolean isShared =
-                            sharedDependencies != null && sharedDependencies.contains(artifact.getGroupId() + ":" + artifact.getArtifactId());
+                    if (banned) {
+                        autoBannedIds.add(artifactKey);
+                    }
+                    else if (excluded) {
+                        userExcludesIds.add(artifactKey);
+                    }
+                    else {
+                        boolean isShared = sharedDependencies != null && sharedDependencies.contains(artifact.getGroupId() + ":" + artifact.getArtifactId());
 
                         // classpath dependencies uses baseVersion, and let PluginManager resolve them runtime
                         // this enables easy development turnaround, by not having recompiling the plugin to drop-in newer snapshot
@@ -222,9 +262,6 @@ public class GenerateMetadataMojo
                         ));
                         classpathArtifacts.add(artifact);
                     }
-                    else {
-                        userExcludesIds.add(artifactKey);
-                    }
                 }
             }
 
@@ -234,6 +271,15 @@ public class GenerateMetadataMojo
                 getLog().info("Including " + pluginIds.size() + " plugin dependencies:");
                 for (String id : ids) {
                     getLog().info(" + " + id);
+                }
+            }
+
+            if (!autoBannedIds.isEmpty()) {
+                List<String> ids = new ArrayList<String>(autoBannedIds);
+                Collections.sort(ids);
+                getLog().info("Banned " + autoBannedIds.size() + " dependencies:");
+                for (String id : ids) {
+                    getLog().info(" - " + id);
                 }
             }
 
@@ -260,18 +306,57 @@ public class GenerateMetadataMojo
         return classpathArtifacts;
     }
 
-    protected boolean isExcluded(final String key) {
-        if (classpathDependencyExcludes == null) {
-            return false;
-        }
-
-        for (String exclude : classpathDependencyExcludes) {
-            if (key.startsWith(exclude)) {
-                return true;
+    protected boolean isBanned(final String key) {
+        if (bannedIds != null) {
+            for (String exclude : bannedIds) {
+                if (key.startsWith(exclude)) {
+                    return true;
+                }
             }
         }
-
         return false;
+    }
+
+    protected boolean isExcluded(final String key) {
+        if (classpathDependencyExcludes != null) {
+            for (String exclude : classpathDependencyExcludes) {
+                if (key.startsWith(exclude)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<String> collectBannedDependencies() throws DependencyCollectionException {
+        getLog().debug("Resolving plugin api dependencies: " + bannedRootArtifactId);
+
+        final List<String> banned = new ArrayList<String>();
+        final org.sonatype.aether.artifact.Artifact root = new DefaultArtifact(bannedRootArtifactId);
+
+        CollectRequest request = new CollectRequest();
+        request.setRepositories(project.getRemoteProjectRepositories());
+        request.setRoot(new Dependency(root, "runtime"));
+        CollectResult result = repositorySession.collectDependencies(repositorySystemSession, request);
+        result.getRoot().accept(new DependencyVisitor()
+        {
+            public boolean visitEnter(final DependencyNode node) {
+
+                org.sonatype.aether.artifact.Artifact artifact = node.getDependency().getArtifact();
+                if (!root.equals(artifact)) {
+                    String id = String.format("%s:%s", artifact.getGroupId(), artifact.getArtifactId());
+                    getLog().debug("banned: " + id);
+                    banned.add(id);
+                }
+                return true;
+            }
+
+            public boolean visitLeave(final DependencyNode node) {
+                return true;
+            }
+        });
+
+        return banned;
     }
 
     // SCM
