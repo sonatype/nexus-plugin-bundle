@@ -135,6 +135,15 @@ public class GenerateMetadataMojo
   @Parameter
   private String bannedRootArtifactId;
 
+  /**
+   * Allows the dependency banning logic to be disabled.
+   */
+  @Parameter
+  private boolean dependencyBanningEnabled = true;
+
+  /**
+   * List of banned groupId:artifactId dependencies.
+   */
   private List<String> bannedIds;
 
   public void execute() throws MojoExecutionException, MojoFailureException {
@@ -161,11 +170,16 @@ public class GenerateMetadataMojo
 
     // dependencies
     if (bannedRootArtifactId != null) {
-      try {
-        bannedIds = collectBannedDependencies();
+      if (!dependencyBanningEnabled) {
+        getLog().debug("Dependency banning is disabled");
       }
-      catch (DependencyCollectionException e) {
-        throw new MojoFailureException(e.getMessage(), e);
+      else {
+        try {
+          bannedIds = collectBannedDependencies();
+        }
+        catch (DependencyCollectionException e) {
+          throw new MojoFailureException(e.getMessage(), e);
+        }
       }
     }
     Set<Artifact> classpathArtifacts = fillInDependencies(request);
@@ -315,7 +329,8 @@ public class GenerateMetadataMojo
   protected boolean isBanned(final String key) {
     if (bannedIds != null) {
       for (String exclude : bannedIds) {
-        if (key.startsWith(exclude)) {
+        // check if artifact key is banned, append ":" to ensure we only get full groupId:artifactId matches
+        if (key.startsWith(exclude + ":")) {
           return true;
         }
       }
