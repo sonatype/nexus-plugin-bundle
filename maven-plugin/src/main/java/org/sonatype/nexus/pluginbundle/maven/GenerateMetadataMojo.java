@@ -20,22 +20,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.collection.CollectRequest;
-import org.sonatype.aether.collection.CollectResult;
-import org.sonatype.aether.collection.DependencyCollectionException;
-import org.sonatype.aether.graph.Dependency;
-import org.sonatype.aether.graph.DependencyNode;
-import org.sonatype.aether.graph.DependencyVisitor;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseCommand;
 import org.sonatype.nexus.pluginbundle.maven.scm.GitRevParseScmResult;
 import org.sonatype.nexus.pluginbundle.maven.scm.HgDebugIdCommand;
 import org.sonatype.nexus.pluginbundle.maven.scm.HgDebugIdScmResult;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.License;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -53,6 +43,16 @@ import org.apache.maven.scm.provider.svn.command.info.SvnInfoItem;
 import org.apache.maven.scm.provider.svn.command.info.SvnInfoScmResult;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.codehaus.plexus.util.StringUtils;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.CollectResult;
+import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.graph.DependencyVisitor;
 
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
 import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
@@ -182,7 +182,7 @@ public class GenerateMetadataMojo
         }
       }
     }
-    Set<Artifact> classpathArtifacts = fillInDependencies(request);
+    Set<org.apache.maven.artifact.Artifact> classpathArtifacts = fillInDependencies(request);
 
     // scm information
     fillScmInfo(request);
@@ -207,11 +207,11 @@ public class GenerateMetadataMojo
     }
   }
 
-  private Set<Artifact> fillInDependencies(final PluginDescriptorGenerationRequest request)
+  private Set<org.apache.maven.artifact.Artifact> fillInDependencies(final PluginDescriptorGenerationRequest request)
       throws MojoFailureException
   {
-    List<Artifact> artifacts = project.getTestArtifacts();
-    Set<Artifact> classpathArtifacts = new HashSet<Artifact>();
+    List<org.apache.maven.artifact.Artifact> artifacts = project.getTestArtifacts();
+    Set<org.apache.maven.artifact.Artifact> classpathArtifacts = new HashSet<org.apache.maven.artifact.Artifact>();
     if (artifacts != null) {
 
       Set<String> excludedArtifactIds = new HashSet<String>();
@@ -221,7 +221,7 @@ public class GenerateMetadataMojo
 
       // FIXME: Drop need for label, the following is already complex and hard to comprehend
       artifactLoop:
-      for (Artifact artifact : artifacts) {
+      for (org.apache.maven.artifact.Artifact artifact : artifacts) {
         final String artifactKey = ClasspathUtils.formatArtifactKey(artifact);
         boolean excluded = isExcluded(artifactKey);
         boolean banned = isBanned(artifactKey);
@@ -353,7 +353,7 @@ public class GenerateMetadataMojo
     getLog().debug("Resolving plugin api dependencies: " + bannedRootArtifactId);
 
     final List<String> banned = new ArrayList<String>();
-    final org.sonatype.aether.artifact.Artifact root = new DefaultArtifact(bannedRootArtifactId);
+    final Artifact root = new DefaultArtifact(bannedRootArtifactId);
 
     CollectRequest request = new CollectRequest();
     request.setRepositories(project.getRemoteProjectRepositories());
@@ -363,7 +363,7 @@ public class GenerateMetadataMojo
     {
       public boolean visitEnter(final DependencyNode node) {
 
-        org.sonatype.aether.artifact.Artifact artifact = node.getDependency().getArtifact();
+        Artifact artifact = node.getDependency().getArtifact();
         if (!root.equals(artifact)) {
           String id = String.format("%s:%s", artifact.getGroupId(), artifact.getArtifactId());
           getLog().debug("banned: " + id);

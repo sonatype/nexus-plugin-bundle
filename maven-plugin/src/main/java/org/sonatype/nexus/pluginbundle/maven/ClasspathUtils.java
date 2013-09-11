@@ -22,17 +22,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
 
 /**
  * Utility methods to read and write a mapping document for non-plugin dependency artifacts used in an application
@@ -67,6 +65,27 @@ public class ClasspathUtils
         .append(COLON)
         .append(artifact.getArtifactId())
         .append(COLON)
+        .append(artifact.getExtension());
+
+    if (!StringUtils.isBlank(artifact.getClassifier())) {
+      buff.append(COLON).append(artifact.getClassifier());
+    }
+
+    buff.append(COLON).append(artifact.getVersion());
+
+    return buff.toString();
+  }
+
+  /**
+   * {@code <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>}
+   */
+  public static String formatArtifactKey(final org.apache.maven.artifact.Artifact artifact) {
+    StringBuilder buff = new StringBuilder();
+
+    buff.append(artifact.getGroupId())
+        .append(COLON)
+        .append(artifact.getArtifactId())
+        .append(COLON)
         .append(artifact.getArtifactHandler().getExtension());
 
     if (!StringUtils.isBlank(artifact.getClassifier())) {
@@ -79,22 +98,7 @@ public class ClasspathUtils
   }
 
   private static Artifact formatArtifactFromKey(final String key, final Properties artifacts) {
-    Pattern p = Pattern.compile("([^: ]+):([^: ]+)(:([^: ]*)(:([^: ]+))?)?:([^: ]+)");
-    Matcher m = p.matcher(key);
-    if (!m.matches()) {
-      throw new IllegalArgumentException("Bad artifact coordinates " + key
-          + ", expected format is <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>");
-    }
-    String groupId = m.group(1);
-    String artifactId = m.group(2);
-    String extension = m.group(4);
-    extension = (extension == null || extension.length() < 1) ? "jar" : extension;
-    String classifier = m.group(6);
-    classifier = (classifier == null || classifier.length() < 1) ? "" : classifier;
-    String version = m.group(7);
-    final DefaultArtifact result = new DefaultArtifact(groupId, artifactId, version, null, extension, classifier, null);
-    result.setFile(new File(artifacts.getProperty(key)));
-    return result;
+    return new DefaultArtifact(key).setFile(new File(artifacts.getProperty(key)));
   }
 
   public static FileItem createFileItemForKey(final String key, final Properties artifacts) {
@@ -115,7 +119,7 @@ public class ClasspathUtils
       buff.append(DASH).append(artifact.getClassifier());
     }
 
-    buff.append(DOT).append(artifact.getType());
+    buff.append(DOT).append(artifact.getExtension());
 
     fileItem.setDestName(buff.toString());
 
@@ -144,13 +148,13 @@ public class ClasspathUtils
     return props;
   }
 
-  public static void write(final BuildContext buildContext, final Set<Artifact> classpathArtifacts,
+  public static void write(final BuildContext buildContext, final Set<org.apache.maven.artifact.Artifact> classpathArtifacts,
                            final MavenProject project)
       throws IOException
   {
     Properties props = new Properties();
 
-    for (Artifact artifact : classpathArtifacts) {
+    for (org.apache.maven.artifact.Artifact artifact : classpathArtifacts) {
       File file = artifact.getFile();
       String name = formatArtifactKey(artifact);
       props.setProperty(name, file.getAbsolutePath());

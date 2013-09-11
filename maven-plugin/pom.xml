@@ -27,9 +27,13 @@
   <artifactId>nexus-plugin-bundle-maven-plugin</artifactId>
   <name>${project.groupId}:${project.artifactId}</name>
   <packaging>maven-plugin</packaging>
+  
+  <prerequisites>
+    <maven>3.1</maven>
+  </prerequisites>
 
   <properties>
-    <maven.version>3.0.4</maven.version>
+    <maven.version>3.1.0</maven.version>
 
     <!--
     Newer SCM has compilation issues which need to be sorted out before updateing.
@@ -122,6 +126,20 @@
     <dependency>
       <groupId>org.sonatype.plexus</groupId>
       <artifactId>plexus-build-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-api</artifactId>
+      <version>0.9.0.M2</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-util</artifactId>
+      <version>0.9.0.M2</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
