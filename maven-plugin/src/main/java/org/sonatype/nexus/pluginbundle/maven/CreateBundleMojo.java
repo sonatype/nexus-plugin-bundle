@@ -38,7 +38,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 
 /**
  * Create a plugin bundle artifact attach it to the plugins project.
- *
+ * 
  * @since 1.0
  */
 @Mojo(name = "create-bundle", defaultPhase = PACKAGE)
@@ -69,7 +69,7 @@ public class CreateBundleMojo
 
   /**
    * Optional alternative assembly descriptor.
-   *
+   * 
    * Generally should avoid using this feature, its here for compatibility reasons.
    */
   @Parameter
@@ -91,6 +91,8 @@ public class CreateBundleMojo
     assembly.setId(BUNDLE_ID);
     assembly.setIncludeBaseDirectory(false);
 
+    List<FileItem> classPathItems = new ArrayList<FileItem>();
+
     // Write included plugin dependencies into the the /dependencies directory
     try {
       Properties artifacts = ClasspathUtils.read(project);
@@ -107,6 +109,7 @@ public class CreateBundleMojo
           getLog().info(" + " + key);
           FileItem fileItem = ClasspathUtils.createFileItemForKey(key, artifacts);
           fileItem.setOutputDirectory(outputDirectory);
+          classPathItems.add(fileItem);
           assembly.addFile(fileItem);
         }
       }
@@ -119,7 +122,20 @@ public class CreateBundleMojo
     FileItem fileItem = new FileItem();
     fileItem.setSource(project.getArtifact().getFile().getPath());
     fileItem.setOutputDirectory(project.getArtifactId() + "-" + project.getVersion());
+    classPathItems.add(fileItem);
     assembly.addFile(fileItem);
+
+    try {
+      // Add OSGi metadata (optimized for exploded plugin bundle)
+      FileItem osgiItem = new FileItem();
+      osgiItem.setSource(OSGiUtils.updateMetadata(project, classPathItems));
+      osgiItem.setOutputDirectory(fileItem.getOutputDirectory() + "/META-INF");
+      osgiItem.setDestName("MANIFEST.MF");
+      assembly.addFile(osgiItem);
+    }
+    catch (IOException e) {
+      throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e);
+    }
 
     // Generate the bundle assembly
     File assemblyFile;
@@ -135,7 +151,7 @@ public class CreateBundleMojo
     projectHelper.attachArtifact(project, BUNDLE_TYPE, assembly.getId(), assemblyFile);
   }
 
-  private Map<String, String> mapOf(final Properties props) {
+  private static Map<String, String> mapOf(final Properties props) {
     Map<String, String> map = new HashMap<String, String>(props.size());
     for (Object key : props.keySet()) {
       map.put(key.toString(), props.get(key).toString());

@@ -205,6 +205,13 @@ public class GenerateMetadataMojo
     catch (Exception e) {
       throw new MojoFailureException("Failed to generate plugin classpath file: " + e, e);
     }
+
+    try {
+      OSGiUtils.write(buildContext, request.getPluginMetadata(), project);
+    }
+    catch (Exception e) {
+      throw new MojoFailureException("Failed to generate OSGi metadata file: " + e, e);
+    }
   }
 
   private Set<Artifact> fillInDependencies(final PluginDescriptorGenerationRequest request)
