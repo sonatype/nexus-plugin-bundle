@@ -76,26 +76,12 @@ public class OSGiUtils
       IOUtil.close(input);
     }
 
-    Jar jar = null;
-    StringBuilder exports = new StringBuilder();
-    for (FileItem i : content) {
-      try {
-        jar = new Jar(new File(i.getSource()));
-        for (String pkg : jar.getPackages()) {
-          if (pkg.length() > 0 && !pkg.startsWith("META") && !pkg.startsWith("OSGI") && !pkg.startsWith("static")) {
-            if (exports.length() > 0) {
-              exports.append(',');
-            }
-            exports.append(pkg);
-          }
-        }
-      }
-      finally {
-        Closeables.closeQuietly(jar);
-      }
-    }
+    Attributes attributes = mf.getMainAttributes();
 
-    mf.getMainAttributes().putValue(Constants.EXPORT_PACKAGE, exports.toString());
+    String exportedPackages = getExportedPackages(content);
+    if (exportedPackages.length() > 0) {
+      attributes.putValue(Constants.EXPORT_PACKAGE, exportedPackages);
+    }
 
     OutputStream output = null;
     try {
@@ -169,6 +155,31 @@ public class OSGiUtils
       }
       buf.append(d.getGroupId()).append('.').append(d.getArtifactId()).append(";bundle-version=")
           .append(Analyzer.cleanupVersion(d.getVersion()));
+    }
+    return buf.toString();
+  }
+
+  /**
+   * Generates an Export-Package header for the given content.
+   */
+  private static String getExportedPackages(final List<FileItem> content) throws IOException {
+    StringBuilder buf = new StringBuilder();
+    for (FileItem i : content) {
+      Jar jar = null;
+      try {
+        jar = new Jar(new File(i.getSource()));
+        for (String pkg : jar.getPackages()) {
+          if (pkg.length() > 0 && !pkg.startsWith("META") && !pkg.startsWith("OSGI") && !pkg.startsWith("static")) {
+            if (buf.length() > 0) {
+              buf.append(',');
+            }
+            buf.append(pkg);
+          }
+        }
+      }
+      finally {
+        Closeables.closeQuietly(jar);
+      }
     }
     return buf.toString();
   }
