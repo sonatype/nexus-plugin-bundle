@@ -148,7 +148,7 @@ public class OSGiUtils
    * Generates a Require-Bundle header for the Nexus plugin.
    */
   private static String getRequiredBundles(final PluginMetadata metadata) {
-    StringBuilder buf = new StringBuilder();
+    StringBuilder buf = new StringBuilder("org.sonatype.nexus.plugin-api;resolution:=optional");
     for (PluginDependency d : metadata.getPluginDependencies()) {
       if (buf.length() > 0) {
         buf.append(',');
