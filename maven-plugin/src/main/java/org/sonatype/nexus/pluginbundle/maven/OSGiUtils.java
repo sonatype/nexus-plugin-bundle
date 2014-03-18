@@ -169,7 +169,11 @@ public class OSGiUtils
       try {
         jar = new Jar(new File(i.getSource()));
         for (String pkg : jar.getPackages()) {
-          if (pkg.length() > 0 && !pkg.startsWith("META") && !pkg.startsWith("OSGI") && !pkg.startsWith("static")) {
+          if (pkg.length() > 0 &&
+              !pkg.startsWith("META") &&
+              !pkg.startsWith("OSGI") &&
+              !pkg.startsWith("docs") &&
+              !pkg.startsWith("static")) {
             if (buf.length() > 0) {
               buf.append(',');
             }
