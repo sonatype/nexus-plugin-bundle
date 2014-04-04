@@ -33,6 +33,7 @@ import org.sonatype.plugins.model.PluginMetadata;
 
 import aQute.bnd.osgi.Analyzer;
 import aQute.bnd.osgi.Jar;
+import aQute.bnd.version.Version;
 import com.google.common.io.Closeables;
 import org.apache.maven.plugin.assembly.model.FileItem;
 import org.apache.maven.project.MavenProject;
@@ -154,7 +155,7 @@ public class OSGiUtils
         buf.append(',');
       }
       buf.append(d.getGroupId()).append('.').append(d.getArtifactId()).append(";bundle-version=")
-          .append(Analyzer.cleanupVersion(d.getVersion()));
+          .append(Version.parseVersion(Analyzer.cleanupVersion(d.getVersion())).getWithoutQualifier());
     }
     return buf.toString();
   }
