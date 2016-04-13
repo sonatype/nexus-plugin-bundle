@@ -246,6 +246,7 @@ public class GenerateMetadataMojo
               artifact.getBaseVersion(),
               artifact.getClassifier(),
               artifact.getType(),
+              artifact.isOptional(),
               false
           ));
 
@@ -285,6 +286,7 @@ public class GenerateMetadataMojo
                 artifact.getBaseVersion(),
                 artifact.getClassifier(),
                 artifact.getType(),
+                false,
                 isShared
             ));
             classpathArtifacts.add(artifact);

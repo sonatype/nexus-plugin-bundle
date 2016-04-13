@@ -28,7 +28,7 @@ public class GAVCoordinateTest
 {
   @Test
   public void GAV_toString() {
-    GAVCoordinate coord = new GAVCoordinate("foo", "bar", "1.0", null, null, false);
+    GAVCoordinate coord = new GAVCoordinate("foo", "bar", "1.0", null, null, false, false);
     assertThat(coord.toString(), is("foo:bar:1.0"));
   }
 }

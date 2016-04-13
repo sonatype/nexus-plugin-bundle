@@ -324,6 +324,16 @@
           <type>String</type>
           <required>true</required>
         </field>
+        <field>
+          <name>optional</name>
+          <version>1.0.0+</version>
+          <description>
+            Is this dependency optional?
+          </description>
+          <type>boolean</type>
+          <required>false</required>
+          <defaultValue>false</defaultValue>
+        </field>
       </fields>
     </class>
 

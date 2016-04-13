@@ -156,6 +156,9 @@ public class OSGiUtils
       }
       buf.append(d.getGroupId()).append('.').append(d.getArtifactId()).append(";bundle-version=")
           .append(Version.parseVersion(Analyzer.cleanupVersion(d.getVersion())).getWithoutQualifier());
+      if (d.isOptional()) {
+        buf.append(";resolution:=optional");
+      }
     }
     return buf.toString();
   }
