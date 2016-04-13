@@ -93,6 +93,7 @@ public class PluginDescriptorGenerator
         entry.setGroupId(dependency.getGroupId());
         entry.setArtifactId(dependency.getArtifactId());
         entry.setVersion(dependency.getVersion());
+        entry.setOptional(dependency.isOptional());
         metadata.addPluginDependency(entry);
       }
     }

@@ -38,6 +38,8 @@ public class GAVCoordinate
 
   private final String type;
 
+  private final boolean optional;
+
   private final boolean shared;
 
   public GAVCoordinate(final String groupId,
@@ -45,6 +47,7 @@ public class GAVCoordinate
                        final String version,
                        final @Nullable String classifier,
                        final @Nullable String type,
+                       final boolean optional,
                        final boolean shared)
   {
     this.groupId = groupId;
@@ -65,6 +68,7 @@ public class GAVCoordinate
       this.type = DEFAULT_TYPE;
     }
 
+    this.optional = optional;
     this.shared = shared;
   }
 
@@ -86,6 +90,10 @@ public class GAVCoordinate
 
   public String getType() {
     return type;
+  }
+
+  public boolean isOptional() {
+    return optional;
   }
 
   public boolean isShared() {
